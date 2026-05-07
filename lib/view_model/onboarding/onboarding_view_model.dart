@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/data/models/onboarding_model.dart';
+import 'package:blood_bank/data/models/onboarding_model.dart';
 
 class OnboardingViewModel extends ChangeNotifier {
   int _currentPage = 0;

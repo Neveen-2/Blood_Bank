@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/core/constants/app_colors.dart';
-import 'package:graduation_project/core/constants/app_assets.dart';
-import 'package:graduation_project/view/onboarding/onboarding.dart';
-import 'package:graduation_project/view_model/splash/splash_view_model.dart';
+import 'package:blood_bank/core/constants/app_colors.dart';
+import 'package:blood_bank/core/constants/app_assets.dart';
+import 'package:blood_bank/view/onboarding/onboarding.dart';
+import 'package:blood_bank/view_model/splash/splash_view_model.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -53,7 +53,9 @@ class _SplashScreenState extends State<SplashScreen>
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
+          // ignore: unnecessary_underscores
           pageBuilder: (_, __, ___) => const OnboardingScreen(),
+          // ignore: unnecessary_underscores
           transitionsBuilder: (_, anim, __, child) =>
               FadeTransition(opacity: anim, child: child),
           transitionDuration: const Duration(milliseconds: 600),

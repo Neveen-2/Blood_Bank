@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/core/widgets/app_text_field.dart';
-import 'package:graduation_project/core/widgets/app_error_box.dart';
-import 'package:graduation_project/core/widgets/notes_field.dart';
-import 'package:graduation_project/core/widgets/primary_button.dart';
-import 'package:graduation_project/core/widgets/app_section_title.dart';
-import 'package:graduation_project/core/widgets/app_label.dart';
-import 'package:graduation_project/core/widgets/app_dropdown.dart';
-import 'package:graduation_project/core/widgets/app_toggle_button.dart';
-import 'package:graduation_project/core/constants/app_enums.dart';
-import 'package:graduation_project/view_model/emergency/emergency_view_model.dart';
+import 'package:blood_bank/core/widgets/app_text_field.dart';
+import 'package:blood_bank/core/widgets/app_error_box.dart';
+import 'package:blood_bank/core/widgets/notes_field.dart';
+import 'package:blood_bank/core/widgets/primary_button.dart';
+import 'package:blood_bank/core/widgets/app_section_title.dart';
+import 'package:blood_bank/core/widgets/app_label.dart';
+import 'package:blood_bank/core/widgets/app_dropdown.dart';
+import 'package:blood_bank/core/widgets/app_toggle_button.dart';
+import 'package:blood_bank/core/constants/app_enums.dart';
+import 'package:blood_bank/view_model/emergency/emergency_view_model.dart';
 
 class EmergencyBody extends StatelessWidget {
   final EmergencyViewModel viewModel;

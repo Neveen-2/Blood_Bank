@@ -1,4 +1,4 @@
-import 'package:graduation_project/core/constants/app_assets.dart';
+import 'package:blood_bank/core/constants/app_assets.dart';
 
 class OnboardingModel {
   final String title;

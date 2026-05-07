@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/core/constants/app_colors.dart';
+import 'package:blood_bank/core/constants/app_colors.dart';
 
 class NotesField extends StatelessWidget {
   final TextEditingController controller;

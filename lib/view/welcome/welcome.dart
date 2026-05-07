@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/core/constants/app_colors.dart';
-import 'package:graduation_project/core/constants/app_text_styles.dart';
-import 'package:graduation_project/core/constants/app_assets.dart';
-import 'package:graduation_project/core/widgets/primary_button.dart';
-import 'package:graduation_project/view/auth/login.dart';
-import 'package:graduation_project/view/auth/signup.dart';
+import 'package:blood_bank/core/constants/app_colors.dart';
+import 'package:blood_bank/core/constants/app_text_styles.dart';
+import 'package:blood_bank/core/constants/app_assets.dart';
+import 'package:blood_bank/core/widgets/primary_button.dart';
+import 'package:blood_bank/view/auth/login.dart';
+import 'package:blood_bank/view/auth/signup.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/core/constants/app_colors.dart';
-import 'package:graduation_project/core/constants/app_text_styles.dart';
+import 'package:blood_bank/core/constants/app_colors.dart';
+import 'package:blood_bank/core/constants/app_text_styles.dart';
 
-import 'package:graduation_project/core/constants/app_assets.dart';
-import 'package:graduation_project/core/widgets/app_text_field.dart';
-import 'package:graduation_project/core/widgets/primary_button.dart';
-import 'package:graduation_project/core/widgets/app_error_box.dart';
-import 'package:graduation_project/core/constants/app_enums.dart';
-import 'package:graduation_project/view_model/auth/signup_view_model.dart';
-import 'package:graduation_project/view/home/home.dart';
+import 'package:blood_bank/core/constants/app_assets.dart';
+import 'package:blood_bank/core/widgets/app_text_field.dart';
+import 'package:blood_bank/core/widgets/primary_button.dart';
+import 'package:blood_bank/core/widgets/app_error_box.dart';
+import 'package:blood_bank/core/constants/app_enums.dart';
+import 'package:blood_bank/view_model/auth/signup_view_model.dart';
+import 'package:blood_bank/view/home/home.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});

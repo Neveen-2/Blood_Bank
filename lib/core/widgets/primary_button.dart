@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/core/constants/app_colors.dart';
-import 'package:graduation_project/core/constants/app_text_styles.dart';
+import 'package:blood_bank/core/constants/app_colors.dart';
+import 'package:blood_bank/core/constants/app_text_styles.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;
@@ -27,6 +27,7 @@ class PrimaryButton extends StatelessWidget {
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.white,
           elevation: 4,
+          // ignore: deprecated_member_use
           shadowColor: AppColors.primary.withOpacity(0.4),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),

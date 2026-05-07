@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/core/constants/app_colors.dart';
-import 'package:graduation_project/core/constants/app_assets.dart';
-import 'package:graduation_project/view_model/home/home_view_model.dart';
+import 'package:blood_bank/core/constants/app_colors.dart';
+import 'package:blood_bank/core/constants/app_assets.dart';
+import 'package:blood_bank/view_model/home/home_view_model.dart';
 
 class HomeBody extends StatelessWidget {
   final HomeViewModel viewModel;
@@ -33,6 +33,7 @@ class HomeBody extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: AppColors.primary.withOpacity(0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
@@ -128,6 +129,7 @@ class HomeBody extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
+          // ignore: deprecated_member_use
           color: AppColors.primary.withOpacity(0.08),
           borderRadius: BorderRadius.circular(16),
         ),
@@ -188,6 +190,7 @@ class HomeBody extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.05),
             blurRadius: 6,
             offset: const Offset(0, 2),
@@ -201,6 +204,7 @@ class HomeBody extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
+              // ignore: deprecated_member_use
               color: AppColors.primary.withOpacity(0.1),
               shape: BoxShape.circle,
             ),

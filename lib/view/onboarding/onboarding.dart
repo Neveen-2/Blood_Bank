@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/core/constants/app_colors.dart';
-import 'package:graduation_project/core/widgets/onboarding_page.dart';
-import 'package:graduation_project/core/widgets/outline_button.dart';
-import 'package:graduation_project/core/widgets/page_indicator.dart';
-import 'package:graduation_project/core/widgets/primary_button.dart';
-import 'package:graduation_project/view_model/onboarding/onboarding_view_model.dart';
-import 'package:graduation_project/view/welcome/welcome.dart';
+import 'package:blood_bank/core/constants/app_colors.dart';
+import 'package:blood_bank/core/widgets/onboarding_page.dart';
+import 'package:blood_bank/core/widgets/outline_button.dart';
+import 'package:blood_bank/core/widgets/page_indicator.dart';
+import 'package:blood_bank/core/widgets/primary_button.dart';
+import 'package:blood_bank/view_model/onboarding/onboarding_view_model.dart';
+import 'package:blood_bank/view/welcome/welcome.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});

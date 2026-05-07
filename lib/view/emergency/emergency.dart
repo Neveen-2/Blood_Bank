@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/core/constants/app_colors.dart';
+import 'package:blood_bank/core/constants/app_colors.dart';
 
-import 'package:graduation_project/view/emergency/emergency_body.dart';
-import 'package:graduation_project/view/emergency/app_bar.dart';
-import 'package:graduation_project/core/constants/app_enums.dart';
-import 'package:graduation_project/view_model/emergency/emergency_view_model.dart';
+import 'package:blood_bank/view/emergency/emergency_body.dart';
+import 'package:blood_bank/view/emergency/app_bar.dart';
+import 'package:blood_bank/core/constants/app_enums.dart';
+import 'package:blood_bank/view_model/emergency/emergency_view_model.dart';
 
 class EmergencyScreen extends StatefulWidget {
   final VoidCallback onBackToHome;

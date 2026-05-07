@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:graduation_project/core/constants/app_colors.dart';
+import 'package:blood_bank/core/constants/app_colors.dart';
 
 
 class AppErrorBox extends StatelessWidget {
@@ -14,6 +14,7 @@ class AppErrorBox extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
+        // ignore: deprecated_member_use
         color: AppColors.primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
       ),

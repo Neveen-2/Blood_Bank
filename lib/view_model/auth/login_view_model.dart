@@ -1,9 +1,10 @@
 // lib/view_model/auth/login_view_model.dart
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:graduation_project/core/constants/app_enums.dart';
+import 'package:blood_bank/core/constants/app_enums.dart';
 
 class LoginViewModel extends ChangeNotifier {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -31,11 +32,30 @@ class LoginViewModel extends ChangeNotifier {
 
     _status = AuthStatus.loading;
     notifyListeners();
+    //authenticate user with Firebase
+    try {
+      await _auth.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
 
-    // simulate api call
-    await Future.delayed(const Duration(seconds: 2));
+      _status = AuthStatus.success;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        _errorMessage = 'No user found for that email';
+      } else if (e.code == 'wrong-password') {
+        _errorMessage = 'Wrong password';
+      } else if (e.code == 'invalid-email') {
+        _errorMessage = 'Invalid email';
+      } else {
+        _errorMessage = e.message ?? 'Login failed';
+      }
+      _status = AuthStatus.error;
+    } catch (e) {
+      _errorMessage = 'Something went wrong';
+      _status = AuthStatus.error;
+    }
 
-    _status = AuthStatus.success;
     notifyListeners();
   }
 

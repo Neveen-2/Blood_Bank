@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:graduation_project/core/constants/app_colors.dart';
+import 'package:blood_bank/core/constants/app_colors.dart';
 
 class PageIndicator extends StatelessWidget {
   final int total;
@@ -28,6 +28,7 @@ class PageIndicator extends StatelessWidget {
           decoration: BoxDecoration(
             color: isActive
                 ? AppColors.primary
+                // ignore: deprecated_member_use
                 : AppColors.primary.withOpacity(0.3),
             borderRadius: BorderRadius.circular(4),
           ),
