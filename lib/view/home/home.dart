@@ -1,8 +1,8 @@
+import 'package:blood_bank/view/blood/select_blood_group.dart';
 import 'package:flutter/material.dart';
 import 'package:blood_bank/core/widgets/home_body.dart';
 import 'package:blood_bank/core/widgets/home_bottom_nav.dart';
 import 'package:blood_bank/core/widgets/home_header.dart';
-import 'package:blood_bank/view/blood/blood.dart';
 import 'package:blood_bank/view/emergency/emergency.dart';
 import 'package:blood_bank/view/profile/profile.dart';
 import 'package:blood_bank/view_model/home/home_view_model.dart';
@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
       ),
-      const BloodScreen(),
+      const SelectBloodGroupView(),
       const ProfileScreen(),
     ];
     return Scaffold(

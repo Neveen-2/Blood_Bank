@@ -1,3 +1,4 @@
+import 'package:blood_bank/view/blood/nearby_blood_banks.dart';
 import 'package:flutter/material.dart';
 import 'package:blood_bank/core/constants/app_colors.dart';
 import 'package:blood_bank/core/constants/app_assets.dart';
@@ -18,7 +19,7 @@ class HomeBody extends StatelessWidget {
           const SizedBox(height: 20),
           _quickActions(context),
           const SizedBox(height: 20),
-          _nearbyDonorsSection(),
+          _nearbyDonorsSection(context),
         ],
       ),
     );
@@ -152,7 +153,7 @@ class HomeBody extends StatelessWidget {
     );
   }
 
-  Widget _nearbyDonorsSection() {
+  Widget _nearbyDonorsSection(BuildContext context) {
     return Column(
       children: [
         Row(
@@ -167,7 +168,13 @@ class HomeBody extends StatelessWidget {
               ),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const NearbyBloodBanks(),
+                  ),
+                );
+              },
               child: const Text(
                 'View All',
                 style: TextStyle(color: AppColors.primary, fontSize: 13),
