@@ -1,4 +1,6 @@
+import 'package:blood_bank/view/profile/change_password.dart';
 import 'package:flutter/material.dart';
+import '../../view/home/home.dart';
 import '../../core/constants/app_assets.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text_styles.dart';
@@ -72,7 +74,14 @@ class ProfileScreen extends StatelessWidget {
                         ProfileMenuItem(
                           icon: AppAssets.change_PasswordIcon,
                           title: "Change Password",
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ChangePassword(),
+                              ),
+                            );
+                          },
                         ),
 
                         ProfileMenuItem(
@@ -115,7 +124,14 @@ class ProfileScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   IconButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomeScreen(),
+                        ),
+                      );
+                    },
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
                   ),
                   const Padding(

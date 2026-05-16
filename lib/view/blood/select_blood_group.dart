@@ -1,6 +1,7 @@
-import 'package:blood_bank/core/constants/app_colors.dart';
-import 'package:blood_bank/core/constants/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
+import '../../view/home/home.dart';
 import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/blood_type_card.dart';
 import '../../core/widgets/custom_option_selector.dart';
@@ -18,7 +19,7 @@ class _SelectBloodGroupViewState extends State<SelectBloodGroupView> {
   String selectedRelation = 'Friend';
 
   final List<Map<String, String>> bloodGroups = [
-    {'type': 'AB', 'label': 'A Positive', 'sub': '(A+)'},
+    {'type': 'A+', 'label': 'A Positive', 'sub': '(A+)'},
     {'type': 'B+', 'label': 'B Positive', 'sub': '(B+)'},
     {'type': 'A-', 'label': 'A Negative', 'sub': '(A-)'},
     {'type': 'O-', 'label': 'O Negative', 'sub': '(O-)'},
@@ -35,7 +36,15 @@ class _SelectBloodGroupViewState extends State<SelectBloodGroupView> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: const BackButton(color: Colors.grey),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            );
+          },
+          icon: const Icon(Icons.arrow_back, color: Colors.grey),
+        ),
         title: const Text(
           "Select Blood Group",
           style: TextStyle(
