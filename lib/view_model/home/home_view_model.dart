@@ -9,41 +9,40 @@ class HomeViewModel extends ChangeNotifier {
   String userName = 'Naveen';
   String urgentBloodType = 'O-';
   String urgentLocation = 'aaa';
-  final DatabaseReference _db = FirebaseDatabase.instance.ref("emergencies");
+  final DatabaseReference _db = FirebaseDatabase.instance.ref("");
 
   // Nearby donors list
   List<Map<String, dynamic>> nearbyDonors = [];
 
   // List of recent emergencies
   void listenToEmergencies() {
-    _db.onValue.listen((event) {
-      final data = event.snapshot.value;
+    _db.child("emergencies").orderByChild("time").limitToLast(1).onValue.listen(
+      (event) {
+        final data = event.snapshot.value;
 
-      if (data == null) return;
+        if (data == null) {
+          urgentBloodType = '';
+          urgentLocation = '';
+          notifyListeners();
+          return;
+        }
 
-      final map = Map<String, dynamic>.from(data as Map);
+        final map = Map<String, dynamic>.from(data as Map);
 
-      Map<String, dynamic>? latestEmergency;
-
-      final keys = map.keys.toList().reversed;
-
-      for (var key in keys) {
-        final item = Map<String, dynamic>.from(map[key]);
+        final latestKey = map.keys.first;
+        final item = Map<String, dynamic>.from(map[latestKey]);
 
         if (item['status'] == 'pending') {
-          latestEmergency = item;
-
-          break;
+          urgentBloodType = item['bloodType'] ?? '';
+          urgentLocation = item['location'] ?? '';
+        } else {
+          urgentBloodType = '';
+          urgentLocation = '';
         }
-      }
 
-      if (latestEmergency != null) {
-        urgentBloodType = latestEmergency['bloodType'] ?? '';
-        urgentLocation = latestEmergency['location'] ?? '';
-      }
-
-      notifyListeners();
-    });
+        notifyListeners();
+      },
+    );
   }
 
   void listenToUserData() {
@@ -109,8 +108,7 @@ class HomeViewModel extends ChangeNotifier {
   HomeViewModel() {
     listenToEmergencies();
     listenToUserData();
-    Future.delayed(Duration(seconds: 2), () {
-      loadNearbyDonors();
-    });
+    loadNearbyDonors();
+    
   }
 }

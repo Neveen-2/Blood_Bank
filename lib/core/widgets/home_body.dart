@@ -15,7 +15,10 @@ class HomeBody extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          _urgentBanner(context),
+          //_urgentBanner(context),
+          if (viewModel.urgentBloodType.isNotEmpty &&
+              viewModel.urgentLocation.isNotEmpty)
+            _urgentBanner(context),
           const SizedBox(height: 20),
           _quickActions(context),
           const SizedBox(height: 20),
@@ -183,20 +186,19 @@ class HomeBody extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-       viewModel.nearbyDonors.isEmpty
-    ? const Padding(
-        padding: EdgeInsets.all(20),
-        child: Text(
-          'No nearby donors found',
-          style: TextStyle(color: AppColors.grey),
-        ),
-      )
-    : Column(
-        children:
-            viewModel.nearbyDonors
-                .map((d) => _donorCard(d))
-                .toList(),
-      ),
+        viewModel.nearbyDonors.isEmpty
+            ? const Padding(
+                padding: EdgeInsets.all(20),
+                child: Text(
+                  'No nearby donors found',
+                  style: TextStyle(color: AppColors.grey),
+                ),
+              )
+            : Column(
+                children: viewModel.nearbyDonors
+                    .map((d) => _donorCard(d))
+                    .toList(),
+              ),
       ],
     );
   }

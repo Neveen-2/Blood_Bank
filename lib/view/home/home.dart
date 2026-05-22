@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    viewModel.loadNearbyDonors();
+    //viewModel.loadNearbyDonors();
     viewModel.addListener(() {
       setState(() {});
     });

@@ -51,29 +51,29 @@ class EmergencyViewModel extends ChangeNotifier {
     notifyListeners();
     // await Future.delayed(const Duration(seconds: 2));
     // status = EmergencyStatus.success;
-    
+
     //realtime database
     try {
-    final user = FirebaseAuth.instance.currentUser;
+      final user = FirebaseAuth.instance.currentUser;
 
-    await _db.child("emergencies").push().set({
-      "userId": user?.uid,
-      "bloodType": selectedBloodType,
-      "gender": selectedGender.name,
-      "relation": selectedRelation.name,
-      "location": locationController.text.trim(),
-      "notes": notesController.text.trim(),
-      "time": DateTime.now().toString(),
-      "status": "pending",
-    });
+      await _db.child("emergencies").push().set({
+        "userId": user?.uid,
+        "bloodType": selectedBloodType,
+        "gender": selectedGender.name,
+        "relation": selectedRelation.name,
+        "location": locationController.text.trim(),
+        "notes": notesController.text.trim(),
+        "time": DateTime.now().toString(),
+        "status": "pending",
+      });
 
-    status = EmergencyStatus.success;
-  } catch (e) {
-
-    // ignore: avoid_print
-    print("Error: $e");
-    status = EmergencyStatus.error;
-  }
+      status = EmergencyStatus.success;
+      notifyListeners();
+    } catch (e) {
+      // ignore: avoid_print
+      print("Error: $e");
+      status = EmergencyStatus.error;
+    }
 
     notifyListeners();
   }
