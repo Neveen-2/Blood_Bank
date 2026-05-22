@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="index.js"></script>
+  <title>Dashboard</title>
+</head>
+
+<body>
+<div class="container">
+   <div class="sidebar">
+    <ul>
+        <li>
+   <div class="sidebar-header">  <i class="fa-solid fa-heart"></i>Blood Bank<br> Management System </div>
+        </li>
+        <li>
+            <a class="nav-item active" href="#">
+              <i class="fa-solid fa-chart-line"></i>
+              <p> Dashboard </p>
+            </a>
+        </li>
+        
+        <li class="logout">
+    <a class="nav-item" href="javascript:void(0)" onclick="logout()">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <p>Logout</p>
+    </a>
+</li>
+        
+    </ul>
+   </div> 
+
+    <div class="top-bar">
+        <button class="action-btn btn-refresh" id="manualRefresh">
+            <i class="fas fa-sync-alt"></i> Refresh Data
+        </button>
+        <a href="https://blood-donation-bank-c0d10-default-rtdb.firebaseio.com/" target="_blank" class="action-btn btn-firebase">
+            <i class="fas fa-external-link-alt"></i> Firebase Console
+        </a>
+    </div>
+
+    <div class="content">
+        <div class="title-info">
+            <h1>Dashboard</h1>
+        </div>
+
+        <div class="data-info">
+            <div class="card">
+                <i class="fas fa-user-plus stat-icon"></i>
+                <div class="stat-info"><span>Total Donors</span><span class="stat-value" id="val-donors">0</span></div>
+            </div>
+            <div class="card">
+                <i class="fas fa-hand-holding-droplet stat-icon"></i>
+                <div class="stat-info"><span>Blood Units</span><span class="stat-value" id="val-units">0</span></div>
+            </div>
+            <div class="card">
+                <i class="fas fa-calendar-check stat-icon"></i>
+                <div class="stat-info"><span>This Month</span><span class="stat-value" id="val-month">+0</span></div>
+            </div>
+            <div class="card">
+                <i class="fas fa-bell stat-icon" ></i>
+                <div class="stat-info"><span>Critical Alerts</span><span class="stat-value" id="val-alerts">0</span></div>
+            </div>
+        </div>
+
+        <div class="charts">
+            <div class="chart-box"><canvas id="barChart"></canvas></div>
+            <div class="chart-box"><canvas id="pieChart"></canvas></div>
+        </div>
+
+        <div class="activity-card">
+            <h3>Recent Activity</h3>
+            <div id="activityLog"></div>
+        </div>
+    </div>
+  </div>
+  
+</body>
+</html>
