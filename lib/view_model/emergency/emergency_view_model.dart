@@ -70,6 +70,7 @@ class EmergencyViewModel extends ChangeNotifier {
     status = EmergencyStatus.success;
   } catch (e) {
 
+    // ignore: avoid_print
     print("Error: $e");
     status = EmergencyStatus.error;
   }

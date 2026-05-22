@@ -183,12 +183,25 @@ class HomeBody extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        ...viewModel.nearbyDonors.map((d) => _donorCard(d)),
+       viewModel.nearbyDonors.isEmpty
+    ? const Padding(
+        padding: EdgeInsets.all(20),
+        child: Text(
+          'No nearby donors found',
+          style: TextStyle(color: AppColors.grey),
+        ),
+      )
+    : Column(
+        children:
+            viewModel.nearbyDonors
+                .map((d) => _donorCard(d))
+                .toList(),
+      ),
       ],
     );
   }
 
-  Widget _donorCard(Map<String, String> donor) {
+  Widget _donorCard(Map<String, dynamic> donor) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),

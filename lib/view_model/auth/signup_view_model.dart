@@ -1,5 +1,5 @@
 // lib/view_model/auth/signup_view_model.dart
-
+import 'package:geocoding/geocoding.dart';
 import 'package:flutter/material.dart';
 import 'package:blood_bank/core/constants/app_enums.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -56,17 +56,38 @@ class SignupViewModel extends ChangeNotifier {
 
     // _status = AuthStatus.success;
     // notifyListeners();
-    
+
     //firebase authentication and firestore user creation
     try {
       // 1.Authentication
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(
             email: emailController.text.trim(),
             password: passwordController.text.trim(),
           );
 
       String uid = userCredential.user!.uid;
-
+      //geocoding to get lat and lng from address
+      double? lat;
+      double? lng;
+      try {
+        List<Location> locations = await locationFromAddress(
+          addressController.text.trim(),
+        );
+        lat = locations.first.latitude;
+        lng = locations.first.longitude;
+      } catch (e) {
+        // If geocoding fails
+        lat = null;
+        lng = null;
+      }
+      //validation for a correct address
+      if (lat == null || lng == null) {
+        _errorMessage = "Invalid address, please enter a correct location";
+        _status = AuthStatus.error;
+        notifyListeners();
+        return;
+      }
       // 2.Firestore
       await _firestore.collection('users').doc(uid).set({
         "uid": uid,
@@ -75,7 +96,9 @@ class SignupViewModel extends ChangeNotifier {
         "email": emailController.text.trim(),
         "address": addressController.text.trim(),
         "bloodType": bloodTypeController.text.trim(),
-        "createdAt": Timestamp.now(),
+        "latitude": lat,
+        "longitude": lng,
+         "createdAt": Timestamp.now(),
       });
 
       _status = AuthStatus.success;

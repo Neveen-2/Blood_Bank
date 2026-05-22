@@ -26,7 +26,7 @@ class _SelectBloodGroupViewState extends State<SelectBloodGroupView> {
     {'type': 'O+', 'label': 'O Positive', 'sub': '(O+)'},
     {'type': 'B-', 'label': 'B Negative', 'sub': '(B-)'},
     {'type': 'AB+', 'label': 'AB Positive', 'sub': '(AB+)'},
-    {'type': 'AB', 'label': 'A Positive', 'sub': '(A+)'},
+    {'type': 'AB-', 'label': 'AB Negative', 'sub': '(AB-)'},
   ];
 
   @override

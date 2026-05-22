@@ -28,19 +28,18 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const ProfileDataField(label: "Username", hint: "yANCHUI"),
+                  const ProfileDataField(
+                    label: "Username", 
+                    hint: "yANCHUI"),
                   const ProfileDataField(
                     label: "Email",
-                    hint: "yanchui@gmail.com",
+                    hint: "your@gmail.com",
                   ),
                   const ProfileDataField(
                     label: "Phone Number",
-                    hint: "+14987889999",
+                    hint: "+0123456789",
                   ),
-                  const ProfileDataField(
-                    label: "Blood type",
-                    hint: "evFTbyVVCd",
-                  ),
+                  const ProfileDataField(label: "Blood type", hint: "A-"),
 
                   const SizedBox(height: 25),
 

@@ -27,12 +27,15 @@ class AppAssets {
   static const String appLogo = 'assets/images/logo.png';
 
   static const String photo = 'assets/images/photo.jpg';
+  // ignore: constant_identifier_names
   static const String change_PasswordIcon = 'assets/images/change_password.png';
   static const String loadingIcon = 'assets/images/loading.png';
   static const String logoutIcon = 'assets/images/logout.png';
   static const String nevIcon = 'assets/images/nev.png';
   static const String dashBoardIcon = 'assets/images/Dashboard.png';
+  // ignore: constant_identifier_names
   static const String u_share_altIcon = 'assets/images/u_share_alt.png';
+  // ignore: constant_identifier_names
   static const String blood_dropIcon = 'assets/images/blood_drop.png';
   static const String vectorIcon = 'assets/images/Vector.png';
   static const String locatedIcon = 'assets/images/located.png';
