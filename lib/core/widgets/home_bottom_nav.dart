@@ -19,26 +19,12 @@ class HomeBottomNav extends StatelessWidget {
       onTap: onTap,
       selectedItemColor: AppColors.primary,
       unselectedItemColor: AppColors.grey,
-      selectedLabelStyle: const TextStyle(
-        fontWeight: FontWeight.w600,
-      ),
+      selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
       items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: "Home",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.warning),
-          label: "Emergency",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.bloodtype),
-          label: "Blood",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: "Profile",
-        ),
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+        BottomNavigationBarItem(icon: Icon(Icons.warning), label: "Emergency"),
+        BottomNavigationBarItem(icon: Icon(Icons.bloodtype), label: "Blood"),
+        BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
       ],
     );
   }

@@ -1,7 +1,5 @@
-
 import 'package:flutter/material.dart';
 import 'package:blood_bank/core/constants/app_colors.dart';
-
 
 class AppLabel extends StatelessWidget {
   final String text;

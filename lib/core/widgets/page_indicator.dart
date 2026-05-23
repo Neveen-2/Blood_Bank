@@ -5,11 +5,7 @@ class PageIndicator extends StatelessWidget {
   final int total;
   final int current;
 
-  const PageIndicator({
-    super.key,
-    required this.total,
-    required this.current,
-  });
+  const PageIndicator({super.key, required this.total, required this.current});
 
   @override
   Widget build(BuildContext context) {

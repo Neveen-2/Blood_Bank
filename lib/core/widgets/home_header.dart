@@ -4,10 +4,7 @@ import 'package:blood_bank/core/constants/app_colors.dart';
 class HomeHeader extends StatelessWidget {
   final String userName;
 
-  const HomeHeader({
-    super.key,
-    required this.userName,
-  });
+  const HomeHeader({super.key, required this.userName});
 
   @override
   Widget build(BuildContext context) {
@@ -37,17 +34,11 @@ class HomeHeader extends StatelessWidget {
                 ),
                 const Text(
                   "Let's Begin!",
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 13,
-                  ),
+                  style: TextStyle(color: Colors.white70, fontSize: 13),
                 ),
               ],
             ),
-            const Icon(
-              Icons.notifications_outlined,
-              color: Colors.white,
-            ),
+            const Icon(Icons.notifications_outlined, color: Colors.white),
           ],
         ),
       ),

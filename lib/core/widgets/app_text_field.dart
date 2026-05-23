@@ -25,26 +25,16 @@ class AppTextField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
-      style: const TextStyle(
-        fontSize: 14,
-        color: AppColors.black,
-      ),
+      style: const TextStyle(fontSize: 14, color: AppColors.black),
       decoration: InputDecoration(
         filled: true,
         fillColor: AppColors.inputBg,
 
         hintText: hint,
-        hintStyle: const TextStyle(
-          fontSize: 14,
-          color: AppColors.grey,
-        ),
+        hintStyle: const TextStyle(fontSize: 14, color: AppColors.grey),
 
         prefixIcon: prefixIcon != null
-            ? Icon(
-                prefixIcon,
-                color: AppColors.grey,
-                size: 20,
-              )
+            ? Icon(prefixIcon, color: AppColors.grey, size: 20)
             : null,
 
         suffixIcon: suffixIcon,
@@ -61,10 +51,7 @@ class AppTextField extends StatelessWidget {
 
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: AppColors.primary,
-            width: 1,
-          ),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1),
         ),
 
         contentPadding: const EdgeInsets.symmetric(

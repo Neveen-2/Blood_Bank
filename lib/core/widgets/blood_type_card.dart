@@ -18,9 +18,7 @@ class BloodTypeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color selectedColor = AppColors.primary; 
-
-    
+    final Color selectedColor = AppColors.primary;
 
     return GestureDetector(
       onTap: onTap,
@@ -40,29 +38,26 @@ class BloodTypeCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Stack(
-              alignment: Alignment.center, 
+              alignment: Alignment.center,
               clipBehavior: Clip.none,
               children: [
-                
                 Image.asset(
                   isSelected ? AppAssets.blood_dropIcon : AppAssets.vectorIcon,
                   width: 38,
-                  height: 53.04, 
-                  fit: BoxFit.contain, 
+                  height: 53.04,
+                  fit: BoxFit.contain,
                 ),
 
-                
                 Positioned(
-                  top: 0, 
-                  right:
-                      -4, 
+                  top: 0,
+                  right: -4,
                   child: Container(
                     width: 26,
-                    height: 26, 
+                    height: 26,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: const Color(0xFF464A57), 
+                      color: const Color(0xFF464A57),
                       border: Border.all(color: Colors.white, width: 1.5),
                     ),
                     child: Text(
@@ -83,12 +78,7 @@ class BloodTypeCard extends StatelessWidget {
             Text(
               label,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 11,
-                height: 1.3,
-                
-              ),
+              style: TextStyle(color: Colors.black, fontSize: 11, height: 1.3),
             ),
           ],
         ),

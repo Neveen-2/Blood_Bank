@@ -26,10 +26,7 @@ class AppOutlineButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          side: BorderSide(
-            color: borderColor ?? AppColors.white,
-            width: 2,
-          ),
+          side: BorderSide(color: borderColor ?? AppColors.white, width: 2),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),

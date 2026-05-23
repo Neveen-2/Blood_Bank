@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:blood_bank/view/splash/splash.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:blood_bank/core/routes/app_router.dart';
+import 'package:blood_bank/core/services/firebase_service.dart';
+import 'package:blood_bank/core/constants/app_routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await FirebaseService.initialize();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -31,7 +32,8 @@ class DonoraApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'Poppins',
       ),
-      home: const SplashScreen(),
+      initialRoute: AppRoutes.splash,
+      routes: AppRouter.routes,
     );
   }
 }

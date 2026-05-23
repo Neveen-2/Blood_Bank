@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:blood_bank/core/constants/app_colors.dart';
 import 'package:blood_bank/core/constants/app_text_styles.dart';
-import 'package:blood_bank/data/models/onboarding_model.dart';
+import 'package:blood_bank/features/onboarding/models/onboarding_model.dart';
 
 class OnboardingPage extends StatelessWidget {
   final OnboardingModel data;
 
-  const OnboardingPage({
-    super.key,
-    required this.data,
-  });
+  const OnboardingPage({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
