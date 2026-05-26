@@ -1,152 +1,293 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'package:blood_bank/core/constants/app_assets.dart';
 import 'package:blood_bank/core/constants/app_colors.dart';
+import 'package:blood_bank/core/constants/app_routes.dart';
 import 'package:blood_bank/core/constants/app_text_styles.dart';
 import 'package:blood_bank/core/widgets/profile_data_field.dart';
-import 'package:blood_bank/core/widgets/profile_menu_item.dart';
+
+import 'package:blood_bank/features/profile/screens/change_password_screen.dart';
+import 'package:blood_bank/features/auth/services/auth_service.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
+
+  Future<Map<String, dynamic>?> _getUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return null;
+
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    return doc.data();
+  }
+
+  Widget _card(Widget child) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildHeader(context),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
-                vertical: 30.0,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const ProfileDataField(label: 'Username', hint: 'Donor User'),
-                  const ProfileDataField(
-                    label: 'Email',
-                    hint: 'donor@example.com',
-                  ),
-                  const ProfileDataField(
-                    label: 'Phone Number',
-                    hint: '+0123456789',
-                  ),
-                  const ProfileDataField(label: 'Blood type', hint: 'O+'),
-                  const SizedBox(height: 25),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: FutureBuilder<Map<String, dynamic>?>(
+        future: _getUserData(),
+        builder: (context, snapshot) {
+          final data = snapshot.data;
+          final user = FirebaseAuth.instance.currentUser;
+
+          final name = data?['fullName'] ?? 'User';
+          final phone = data?['phone'] ?? 'No phone';
+          final blood = data?['bloodType'] ?? 'N/A';
+          final email = user?.email ?? 'No email';
+
+          final initial = name.isNotEmpty ? name[0].toUpperCase() : 'U';
+
+          return Column(
+            children: [
+
+          
+              Container(
+                height: 170,
+                width: double.infinity,
+                color: AppColors.primary,
+                child: SafeArea(
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    alignment: Alignment.center,
                     children: [
-                      Text(
-                        'My Donation History',
-                        style: AppTextStyles.boldStyle16,
+                      Positioned(
+                        top: 10,
+                        left: 10,
+                        child: IconButton(
+                          icon: const Icon(Icons.arrow_back, color: Colors.white),
+                          onPressed: () {
+                            if (Navigator.canPop(context)) {
+                              Navigator.pop(context);
+                            } else {
+                              Navigator.pushReplacementNamed(context, AppRoutes.home);
+                            }
+                          },
+                        ),
                       ),
-                      Image.asset(AppAssets.loadingIcon, width: 30),
+                      const Text(
+                        'Profile',
+                        style: AppTextStyles.font18WhiteBold,
+                      ),
+
+                      Positioned(
+                        bottom: -45,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: CircleAvatar(
+                            radius: 45,
+                            backgroundColor: AppColors.primary.withOpacity(0.1),
+                            child: Text(
+                              initial,
+                              style: const TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  _buildDonationCard(),
-                  const SizedBox(height: 35),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 0,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey.shade200),
-                    ),
-                    child: Column(
-                      children: [
-                        ProfileMenuItem(
-                          icon: AppAssets.change_PasswordIcon,
-                          title: 'Change Password',
-                          onTap: () {},
+                ),
+              ),
+
+              const SizedBox(height: 50),
+
+         
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _card(ProfileDataField(label: 'Username', hint: name)),
+                      _card(ProfileDataField(label: 'Email', hint: email)),
+                      _card(ProfileDataField(label: 'Phone Number', hint: phone)),
+                      _card(ProfileDataField(label: 'Blood type', hint: blood)),
+
+                      const SizedBox(height: 10),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'My Donation History',
+                            style: AppTextStyles.boldStyle16,
+                          ),
+                          Image.asset(AppAssets.loadingIcon, width: 26),
+                        ],
+                      ),
+
+                      const SizedBox(height: 12),
+                      _buildDonationCard(),
+
+                      const SizedBox(height: 30),
+
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                        ProfileMenuItem(
-                          icon: AppAssets.dashBoardIcon,
-                          title: 'Dashboard',
-                          onTap: () {},
+                        child: Column(
+                          children: [
+                            _menuItem(
+                              context,
+                              icon: AppAssets.change_PasswordIcon,
+                              title: 'Change Password',
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const ChangePasswordScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            _divider(),
+                            _menuItem(
+                              context,
+                              icon: AppAssets.dashBoardIcon,
+                              title: 'Dashboard',
+                              onTap: () async {
+                                final Uri url = Uri.parse(
+                                  'https://blood-bank-2d309.web.app/login.html',
+                                );
+                                await launchUrl(
+                                  url,
+                                  mode: LaunchMode.externalApplication,
+                                );
+                              },
+                            ),
+                            _divider(),
+                            _menuItem(
+                              context,
+                              icon: AppAssets.logoutIcon,
+                              title: 'Log Out',
+                              isRed: true,
+                              onTap: () async {
+                                await AuthService().logout();
+                                if (context.mounted) {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    AppRoutes.welcome,
+                                    (route) => false,
+                                  );
+                                }
+                              },
+                            ),
+                          ],
                         ),
-                        ProfileMenuItem(
-                          icon: AppAssets.logoutIcon,
-                          title: 'Log Out',
-                          isRed: true,
-                          onTap: () {},
-                        ),
-                      ],
-                    ),
+                      ),
+
+                      const SizedBox(height: 30),
+                    ],
                   ),
-                ],
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _menuItem(
+    BuildContext context, {
+    required String icon,
+    required String title,
+    bool isRed = false,
+    VoidCallback? onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        child: Row(
+          children: [
+            Image.asset(icon, width: 24, height: 24),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: isRed ? Colors.red : Colors.black87,
+                ),
               ),
             ),
+            const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      clipBehavior: Clip.none,
-      children: [
-        Container(
-          height: MediaQuery.of(context).size.height * 0.22,
-          width: double.infinity,
-          color: AppColors.primary,
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 10),
-                    child: Text(
-                      'Profile',
-                      style: AppTextStyles.font18WhiteBold,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Image.asset(AppAssets.u_share_altIcon, width: 21),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        const Positioned(
-          bottom: -50,
-          child: CircleAvatar(
-            radius: 64,
-            backgroundColor: Colors.white,
-            child: CircleAvatar(
-              radius: 60,
-              backgroundImage: AssetImage(AppAssets.photo),
-            ),
-          ),
-        ),
-      ],
+  Widget _divider() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      child: Divider(color: Colors.grey.shade300, height: 1),
     );
   }
 
   Widget _buildDonationCard() {
     return Container(
-      height: 90,
+      height: 100,
       width: double.infinity,
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.lightPink,
-        borderRadius: BorderRadius.circular(15),
+        gradient: LinearGradient(
+          colors: [AppColors.primary.withOpacity(0.8), AppColors.primary],
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Donations",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              )),
+          SizedBox(height: 6),
+          Text("No donations yet",
+              style: TextStyle(color: Colors.white70)),
+        ],
       ),
     );
   }

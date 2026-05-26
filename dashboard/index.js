@@ -23,12 +23,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const dashboardRef = ref(db, "dashboard");
-onValue(dashboardRef, (snapshot) => {
-  const data = snapshot.val();
 
-  if (data) {
-    updateUI(data);
-  }
+onValue(dashboardRef, (snapshot) => {
+const data = snapshot.val();
+
+if (data) {
+updateUI(data);
+}
 });
 // =========================
 // Charts
@@ -92,13 +93,10 @@ onValue(emergencyRef, (snapshot) => {
 
   let count = 0;
   let html = "";
-  console.log(log);
 
   Object.entries(data).forEach(([key, item]) => {
-    console.log(item);
     if (item.status?.trim().toLowerCase() === "pending") {
       count++;
-      console.log("ADDING TO HTML");
       html += `
         <div class="activity-item">
 
@@ -117,6 +115,8 @@ onValue(emergencyRef, (snapshot) => {
       `;
     }
   });
+  log.innerHTML = html;
+  document.getElementById("val-alerts").innerText = count;
 });
 window.acceptRequest = async function (id, bloodType) {
   try {
@@ -171,6 +171,36 @@ function updateUI(data) {
   document.getElementById("val-month").innerText =
     "+" + (data.stats?.month || 0);
 
+  // document.getElementById("val-alerts").innerText =
+  //     data.stats?.alerts || 0;
+
+  // Activity
+  // const log = document.getElementById("activityLog");
+
+  //log.innerHTML = (data.activity || [])
+  // .map(
+  // (item) => `
+  // <div class="activity-item">
+
+  // <span>
+  //   <span class="activity-dot"></span>
+  //    ${item.text}
+  // </span>
+
+  //<button class="accept-btn" onclick="acceptRequest()">
+  //  Accept
+  //</button>
+
+  // <small>${item.time}</small>
+
+  //</div>
+  //`,
+  //  )
+  //.join("");
+  // window.acceptRequest = function () {
+  // alert("Accepted");
+  // };
+
   // Charts
   barChart.data.datasets[0].data = data.inventory || [];
   barChart.update();
@@ -183,3 +213,7 @@ function updateUI(data) {
 // Start
 // =========================
 initCharts();
+window.logout = function () {
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+}

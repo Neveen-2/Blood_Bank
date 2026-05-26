@@ -44,4 +44,35 @@ class LoginCubit extends Cubit<LoginState> {
       );
     }
   }
+
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    if (email.isEmpty) {
+      emit(
+        state.copyWith(
+          status: AuthStatus.error,
+          errorMessage: 'Please enter your email',
+        ),
+      );
+      return;
+    }
+
+    emit(state.copyWith(status: AuthStatus.loading, errorMessage: ''));
+    try {
+      await _service.sendPasswordResetEmail(email: email);
+      emit(
+        state.copyWith(
+          status: AuthStatus.success,
+          isForgotPasswordSent: true,
+          errorMessage: 'Password reset email sent successfully',
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: AuthStatus.error,
+          errorMessage: e.toString().replaceAll('Exception: ', ''),
+        ),
+      );
+    }
+  }
 }

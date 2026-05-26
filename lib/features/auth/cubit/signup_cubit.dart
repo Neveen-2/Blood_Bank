@@ -21,6 +21,7 @@ class SignupCubit extends Cubit<SignupState> {
     required String address,
     required String bloodType,
     required String password,
+    required String role,
   }) async {
     if (fullName.isEmpty ||
         email.isEmpty ||
@@ -44,6 +45,7 @@ class SignupCubit extends Cubit<SignupState> {
         address: address,
         bloodType: bloodType,
         password: password,
+        role: role,
       );
       emit(state.copyWith(status: AuthStatus.success));
     } catch (e) {

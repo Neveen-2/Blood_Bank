@@ -8,16 +8,32 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="index.js"></script>
-  <title>Document</title>
+  <title>Dashboard</title>
 </head>
 
 <body>
-
-    <div class="sidebar">
-        <div class="sidebar-header">Blood Bank<br>Management</div>
-        <a href="#" class="nav-item active"><i class="fas fa-chart-line"></i> Dashboard</a>
+<div class="container">
+   <div class="sidebar">
+    <ul>
+        <li>
+   <div class="sidebar-header">  <i class="fa-solid fa-heart"></i>Blood Bank<br> Management System </div>
+        </li>
+        <li>
+            <a class="active" href="#">
+              <i class="fa-solid fa-chart-line"></i>
+              <p> Dashboard </p>
+            </a>
+        </li>
         
-    </div>
+        <li class="logout">
+    <a href="javascript:void(0)" onclick="logout()">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <p>Log out</p>
+    </a>
+</li>
+        
+    </ul>
+   </div> 
 
     <div class="top-bar">
         <button class="action-btn btn-refresh" id="manualRefresh">
@@ -58,10 +74,11 @@
         </div>
 
         <div class="activity-card">
-            <h3>Live Activity</h3>
+            <h3>Recent Activity</h3>
             <div id="activityLog"></div>
         </div>
     </div>
+  </div>
   
 </body>
 </html>

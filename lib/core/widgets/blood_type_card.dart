@@ -36,15 +36,18 @@ class BloodTypeCard extends StatelessWidget {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Stack(
               alignment: Alignment.center,
               clipBehavior: Clip.none,
               children: [
                 Image.asset(
-                  isSelected ? AppAssets.blood_dropIcon : AppAssets.vectorIcon,
+                  isSelected
+                      ? AppAssets.blood_dropIcon
+                      : AppAssets.vectorIcon,
                   width: 38,
-                  height: 53.04,
+                  height: 53,
                   fit: BoxFit.contain,
                 ),
 
@@ -72,13 +75,20 @@ class BloodTypeCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 15),
 
-            /// Text
+            const SizedBox(height: 12),
+
+            // ✅ FIXED TEXT (no overflow)
             Text(
               label,
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.black, fontSize: 11, height: 1.3),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 11,
+                height: 1.3,
+              ),
             ),
           ],
         ),

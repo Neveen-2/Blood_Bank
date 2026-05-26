@@ -3,7 +3,9 @@ import 'package:blood_bank/core/constants/app_routes.dart';
 import 'package:blood_bank/features/auth/screens/login_screen.dart';
 import 'package:blood_bank/features/auth/screens/signup_screen.dart';
 import 'package:blood_bank/features/blood/screens/nearby_blood_banks_screen.dart';
+import 'package:blood_bank/features/blood/screens/blood_banks_screen.dart';
 import 'package:blood_bank/features/blood/screens/select_blood_group_screen.dart';
+
 import 'package:blood_bank/features/emergency/screens/emergency_screen.dart';
 import 'package:blood_bank/features/home/screens/home_screen.dart';
 import 'package:blood_bank/features/onboarding/screens/onboarding_screen.dart';
@@ -20,8 +22,13 @@ class AppRouter {
     AppRoutes.signup: (_) => const SignupScreen(),
     AppRoutes.home: (_) => const HomeScreen(),
     AppRoutes.profile: (_) => const ProfileScreen(),
-    AppRoutes.selectBloodGroup: (_) => const SelectBloodGroupScreen(),
+
+    AppRoutes.selectBloodGroup: (_) => const DonorScreen(),
+    AppRoutes.bloodBanks: (_) => const BloodBanksScreen(),
     AppRoutes.nearbyBanks: (_) => const NearbyBloodBanksScreen(),
-    AppRoutes.emergency: (_) => EmergencyScreen(onBackToHome: () {}),
+    AppRoutes.emergency: (context) => EmergencyScreen(
+      onBackToHome: () =>
+          Navigator.pushReplacementNamed(context, AppRoutes.home),
+    ),
   };
 }

@@ -10,40 +10,48 @@
     box-sizing: border-box;
     font-family: 'Segoe UI', sans-serif;
 }
+
 body {
     display: flex;
     background: var(--bg-gray);
 }
 
+/* ================= SIDEBAR ================= */
 .sidebar {
     position: fixed;
     top: 0;
     left: 0;
     width: var(--sidebar-width);
     height: 100vh;
+
     background: var(--primary-red);
     color: white;
+
+    display: flex;
+    flex-direction: column;
+
     padding: 20px 0;
     z-index: 100;
-    transition: 0.3s;
 }
 
+/* مهم جداً عشان logout يثبت تحت */
+.sidebar ul {
+    list-style: none;
+    padding: 0 10px;
+
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* header */
 .sidebar-header {
     padding: 0 20px 30px;
     font-size: 1.2rem;
     font-weight: bold;
 }
 
-.sidebar h2 {
-    margin-bottom: 30px;
-    color: rgb(255, 255, 255);
-}
-
-ul {
-    list-style: none;
-    padding: 0 10px;
-}
-
+/* links */
 ul li a {
     display: flex;
     align-items: center;
@@ -65,34 +73,32 @@ ul li a:hover,
 }
 
 ul li a i {
-    font-size: 24px;
+    font-size: 22px;
 }
 
+/* ================= LOGOUT FIX (IMPORTANT) ================= */
 .logout {
-    position: absolute;
-    bottom: 0;
+    margin-top: auto;   /* أهم سطر */
     width: 100%;
 }
 
-.nav-item {
+/* خلي اللينك يبان صح */
+.logout a {
     display: flex;
     align-items: center;
-    gap: 10px;
-
-    padding: 15px 25px;
-
+    gap: 20px;
+    padding: 12px;
+    margin: 10px;
+    border-radius: 8px;
     color: white;
     text-decoration: none;
-    opacity: 0.8;
-
-    transition: 0.3s;
 }
 
-.nav-item.active {
+.logout a:hover {
     background: rgba(255,255,255,0.2);
-    opacity: 1;
 }
 
+/* ================= TOP BAR ================= */
 .top-bar {
     position: fixed;
     top: 0;
@@ -109,226 +115,63 @@ ul li a i {
     padding: 0 20px;
 
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    transition: 0.3s;
 }
 
-.action-btn {
-    margin-left: 10px;
-    padding: 8px 14px;
-
-    border-radius: 6px;
-    border: 1px solid #ddd;
-
-    cursor: pointer;
-
-    display: flex;
-    align-items: center;
-    gap: 6px;
-
-    background: white;
-    transition: 0.3s;
-}
-
-.btn-refresh:hover {
-    background: #f0f0f0;
-}
-
-.btn-firebase {
-    background: orange;
-    color: white;
-    border: none;
-}
-
-.btn-firebase:hover {
-    background: #f57c00;
-}
-
+/* ================= CONTENT ================= */
 .content {
     margin-left: var(--sidebar-width);
     margin-top: 60px;
 
     width: calc(100% - var(--sidebar-width));
     padding: 20px;
-
-    transition: 0.3s;
 }
 
+/* ================= CARDS ================= */
 .data-info {
-   
     display: grid;
-     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 15px;
     margin-bottom: 20px;
 }
 
 .card {
-
     background: white;
     padding: 20px;
     border-radius: 10px;
-    justify-content: space-between;
-    align-items: center;
-    transition: 0.3s ease;
     text-align: center;
-   
+    transition: 0.3s ease;
 }
 
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 
-.card i {
-    font-size: 30px;
-    color: #0047AB;
-}
-
-.stat-info {
-    display: flex;
-    flex-direction: column;
-    text-align: right;
-}
-
-.stat-value {
-    font-size: 22px;
-    font-weight: bold;
-}
-
-.charts {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.chart-box {
-    background: white;
-    padding: 15px;
-
-    border-radius: 10px;
-    min-height: 300px;
-}
-
-.activity-card {
-    background: white;
-    padding: 20px;
-
-    border-radius: 10px;
-}
-
-.activity-item {    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    padding: 12px 0;
-
-    border-bottom: 1px solid #eee;
-}
-
-.activity-item span {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.activity-item small {
-    margin-left: auto;
-    text-align: right;
-
-    color: #999;
-    font-size: 12px;
-
-    white-space: nowrap;
-}
-
+/* ================= RESPONSIVE ================= */
 @media (max-width: 768px) {
 
     .sidebar {
         width: 70px;
-        height: 100vh;
     }
 
     .sidebar-header {
         font-size: 0;
+        padding: 10px;
     }
 
-    .nav-item {
-        justify-content: center;
-        padding: 15px 10px;
-    }
-
-    .nav-item span,
     ul li a span {
         display: none;
     }
 
-    ul li a {
-        justify-content: center;
-        gap: 10px;
+    .logout a p {
+        display: none;
     }
 
     .content {
         margin-left: 70px;
         width: calc(100% - 70px);
-        padding: 15px;
     }
 
     .top-bar {
         left: 70px;
-    }
-
-    .charts {
-        grid-template-columns: 1fr;
-    }
-    .data-info {
-        grid-template-columns: 1fr;
-    }
-}
-
-/*MOBILE */
-
-@media (max-width: 480px) {
-
-    .sidebar {
-        width: 65px;
-        height: 100vh;
-    }
-
-    .top-bar {
-        left: 65px;
-        padding: 0 10px;
-    }
-
-    .content {
-        margin-left: 65px;
-        width: calc(100% - 65px);
-        padding: 10px;
-    }
-
-    .action-btn {
-        padding: 6px 10px;
-        font-size: 12px;
-    }
-    .card {
-        flex-direction: column;
-        text-align: center;
-        gap: 10px;
-    }
-
-    .stat-info {
-        text-align: center;
-    }
-
-    .data-info {
-        grid-template-columns: 1fr;
-    }
-    .charts {
-        grid-template-columns: 1fr;
-    }
-
-    .chart-box,
-    .activity-card {
-        padding: 10px;
     }
 }

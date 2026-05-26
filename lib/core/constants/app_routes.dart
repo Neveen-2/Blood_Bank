@@ -8,5 +8,7 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String selectBloodGroup = '/selectBloodGroup';
   static const String nearbyBanks = '/nearbyBanks';
+  static const String bloodBanks = '/bloodBanks';
   static const String emergency = '/emergency';
+  static const String dashboard = '/dashboard';
 }

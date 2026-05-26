@@ -4,18 +4,22 @@ import 'package:blood_bank/core/constants/app_text_styles.dart';
 import 'package:blood_bank/core/widgets/blood_type_card.dart';
 import 'package:blood_bank/core/widgets/custom_option_selector.dart';
 import 'package:blood_bank/core/widgets/primary_button.dart';
+import 'package:blood_bank/features/auth/services/auth_service.dart';
+import 'package:geolocator/geolocator.dart';
 
-class SelectBloodGroupScreen extends StatefulWidget {
-  const SelectBloodGroupScreen({super.key});
+class DonorScreen extends StatefulWidget {
+  const DonorScreen({super.key});
 
   @override
-  State<SelectBloodGroupScreen> createState() => _SelectBloodGroupScreenState();
+  State<DonorScreen> createState() => _DonorScreenState();
 }
 
-class _SelectBloodGroupScreenState extends State<SelectBloodGroupScreen> {
+class _DonorScreenState extends State<DonorScreen> {
   String selectedBloodType = 'A-';
   String selectedGender = 'Female';
   String selectedRelation = 'Friend';
+
+  bool _loading = false;
 
   final List<Map<String, String>> bloodGroups = const [
     {'type': 'A+', 'label': 'A Positive', 'sub': '(A+)'},
@@ -35,26 +39,24 @@ class _SelectBloodGroupScreenState extends State<SelectBloodGroupScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back, color: Colors.grey),
-        ),
         title: const Text(
-          'Select Blood Group',
+          'Become a Donor',
           style: TextStyle(
             color: AppColors.grayNew,
             fontWeight: FontWeight.bold,
           ),
         ),
-        centerTitle: true,
       ),
+
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
+            Text('Select Blood Type', style: AppTextStyles.sectionTitleStyle),
+            const SizedBox(height: 12),
+
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -67,9 +69,10 @@ class _SelectBloodGroupScreenState extends State<SelectBloodGroupScreen> {
               itemCount: bloodGroups.length,
               itemBuilder: (context, index) {
                 final group = bloodGroups[index];
+
                 return BloodTypeCard(
                   type: group['type']!,
-                  label: '${group['label']}\n${group['sub']}',
+                  label: group['sub']!,
                   isSelected:
                       selectedBloodType ==
                       group['sub']!.replaceAll('(', '').replaceAll(')', ''),
@@ -83,39 +86,78 @@ class _SelectBloodGroupScreenState extends State<SelectBloodGroupScreen> {
                 );
               },
             ),
-            const SizedBox(height: 30),
-            Text('Patient Gender', style: AppTextStyles.sectionTitleStyle),
-            const SizedBox(height: 15),
+
+            const SizedBox(height: 25),
+
+            Text('Gender', style: AppTextStyles.sectionTitleStyle),
+            const SizedBox(height: 10),
+
             CustomOptionSelector(
               options: const ['Male', 'Female'],
               selectedOption: selectedGender,
               onSelect: (value) => setState(() => selectedGender = value),
             ),
-            const SizedBox(height: 30),
-            Text('Patient Relation', style: AppTextStyles.sectionTitleStyle),
-            const SizedBox(height: 15),
+
+            const SizedBox(height: 25),
+
+            Text('Relation (optional)', style: AppTextStyles.sectionTitleStyle),
+            const SizedBox(height: 10),
+
             CustomOptionSelector(
               options: const ['Family', 'Friend', 'Other'],
               selectedOption: selectedRelation,
               onSelect: (value) => setState(() => selectedRelation = value),
             ),
-            const SizedBox(height: 50),
+
+            const SizedBox(height: 40),
+
             PrimaryButton(
-              text: 'Confirm',
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Selected $selectedBloodType for $selectedRelation',
-                    ),
-                  ),
-                );
-              },
+              text: _loading ? 'Saving...' : 'Become Donor',
+              isLoading: _loading,
+              onPressed: _registerDonor,
             ),
-            const SizedBox(height: 20),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _registerDonor() async {
+    try {
+      setState(() => _loading = true);
+
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      await AuthService().saveDonorProfile(
+        bloodType: selectedBloodType,
+        gender: selectedGender,
+        relation: selectedRelation,
+        latitude: position.latitude,
+        longitude: position.longitude,
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('You are now registered as a donor ❤️'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      Navigator.pop(context);
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 }

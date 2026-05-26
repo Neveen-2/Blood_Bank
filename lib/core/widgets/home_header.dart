@@ -8,16 +8,12 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      bottom: false,
-      child: Container(
-        color: AppColors.primary,
-        padding: EdgeInsets.only(
-          top: MediaQuery.of(context).padding.top + 12,
-          left: 20,
-          right: 20,
-          bottom: 16,
-        ),
+    return Container(
+      width: double.infinity,
+      color: AppColors.primary,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: SafeArea(
+        bottom: false,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -32,13 +28,19 @@ class HomeHeader extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                const SizedBox(height: 4),
                 const Text(
                   "Let's Begin!",
                   style: TextStyle(color: Colors.white70, fontSize: 13),
                 ),
               ],
             ),
-            const Icon(Icons.notifications_outlined, color: Colors.white),
+
+            const Icon(
+              Icons.notifications_outlined,
+              color: Colors.white,
+              size: 26,
+            ),
           ],
         ),
       ),
