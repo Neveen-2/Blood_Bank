@@ -62,8 +62,11 @@ class HomeBody extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.warning_amber_rounded,
-                  color: Colors.white, size: 18),
+              const Icon(
+                Icons.warning_amber_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
               const SizedBox(width: 6),
               Text(
                 'URGENT: $urgentBloodType Needed',
@@ -78,13 +81,15 @@ class HomeBody extends StatelessWidget {
           const SizedBox(height: 4),
           Row(
             children: [
-              const Icon(Icons.location_on,
-                  color: Colors.white60, size: 13),
+              const Icon(Icons.location_on, color: Colors.white60, size: 13),
               const SizedBox(width: 4),
-              Text(
-                urgentLocation ?? '',
-                style: const TextStyle(
-                    color: Colors.white70, fontSize: 12),
+              Expanded(
+                child: Text(
+                  urgentLocation ?? '',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
+                ),
               ),
             ],
           ),
@@ -109,10 +114,7 @@ class HomeBody extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    const DonorScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const DonorScreen()),
             );
           },
         ),
@@ -121,8 +123,7 @@ class HomeBody extends StatelessWidget {
           context,
           'Blood Bank',
           AppAssets.bloodBankIcon,
-          onTap: () => Navigator.pushNamed(
-              context, AppRoutes.bloodBanks),
+          onTap: () => Navigator.pushNamed(context, AppRoutes.bloodBanks),
         ),
 
         _actionCard(
@@ -133,8 +134,7 @@ class HomeBody extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    const LocationPickerScreen(),
+                builder: (context) => const LocationPickerScreen(),
               ),
             );
           },
@@ -198,13 +198,11 @@ class HomeBody extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context)
-                    .pushNamed(AppRoutes.nearbyBanks);
+                Navigator.of(context).pushNamed(AppRoutes.nearbyBanks);
               },
               child: const Text(
                 'View All',
-                style:
-                    TextStyle(color: AppColors.primary, fontSize: 13),
+                style: TextStyle(color: AppColors.primary, fontSize: 13),
               ),
             ),
           ],
@@ -218,10 +216,7 @@ class HomeBody extends StatelessWidget {
                   style: TextStyle(color: AppColors.grey),
                 ),
               )
-            : Column(
-                children:
-                    nearbyDonors.map((d) => _donorCard(d)).toList(),
-              ),
+            : Column(children: nearbyDonors.map((d) => _donorCard(d)).toList()),
       ],
     );
   }
@@ -229,8 +224,7 @@ class HomeBody extends StatelessWidget {
   Widget _donorCard(Map<String, dynamic> donor) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      padding:
-          const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -278,8 +272,11 @@ class HomeBody extends StatelessWidget {
                 const SizedBox(height: 2),
                 Row(
                   children: [
-                    const Icon(Icons.location_on,
-                        size: 12, color: AppColors.grey),
+                    const Icon(
+                      Icons.location_on,
+                      size: 12,
+                      color: AppColors.grey,
+                    ),
                     const SizedBox(width: 2),
                     Text(
                       donor['distance']!,
@@ -294,8 +291,7 @@ class HomeBody extends StatelessWidget {
             ),
           ),
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
             decoration: BoxDecoration(
               color: AppColors.primary,
               borderRadius: BorderRadius.circular(20),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:intl/intl.dart';
 import 'package:blood_bank/core/constants/app_assets.dart';
 import 'package:blood_bank/core/constants/app_colors.dart';
 import 'package:blood_bank/core/constants/app_routes.dart';
@@ -25,6 +25,21 @@ class ProfileScreen extends StatelessWidget {
         .get();
 
     return doc.data();
+  }
+
+  Future<List<QueryDocumentSnapshot>> _getDonations() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) return [];
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('donations')
+        .orderBy('createdAt', descending: true)
+        .get();
+
+    return snapshot.docs;
   }
 
   Widget _card(Widget child) {
@@ -66,8 +81,6 @@ class ProfileScreen extends StatelessWidget {
 
           return Column(
             children: [
-
-          
               Container(
                 height: 170,
                 width: double.infinity,
@@ -81,12 +94,18 @@ class ProfileScreen extends StatelessWidget {
                         top: 10,
                         left: 10,
                         child: IconButton(
-                          icon: const Icon(Icons.arrow_back, color: Colors.white),
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                          ),
                           onPressed: () {
                             if (Navigator.canPop(context)) {
                               Navigator.pop(context);
                             } else {
-                              Navigator.pushReplacementNamed(context, AppRoutes.home);
+                              Navigator.pushReplacementNamed(
+                                context,
+                                AppRoutes.home,
+                              );
                             }
                           },
                         ),
@@ -125,7 +144,6 @@ class ProfileScreen extends StatelessWidget {
 
               const SizedBox(height: 50),
 
-         
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -134,7 +152,9 @@ class ProfileScreen extends StatelessWidget {
                     children: [
                       _card(ProfileDataField(label: 'Username', hint: name)),
                       _card(ProfileDataField(label: 'Email', hint: email)),
-                      _card(ProfileDataField(label: 'Phone Number', hint: phone)),
+                      _card(
+                        ProfileDataField(label: 'Phone Number', hint: phone),
+                      ),
                       _card(ProfileDataField(label: 'Blood type', hint: blood)),
 
                       const SizedBox(height: 10),
@@ -151,7 +171,48 @@ class ProfileScreen extends StatelessWidget {
                       ),
 
                       const SizedBox(height: 12),
-                      _buildDonationCard(),
+                      FutureBuilder<List<QueryDocumentSnapshot>>(
+                        future: _getDonations(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          final donations = snapshot.data!;
+
+                          if (donations.isEmpty) {
+                            return _buildEmptyDonationCard();
+                          }
+
+                          return Column(
+                            children: donations.map((doc) {
+                              final data = doc.data() as Map<String, dynamic>;
+
+                              final bloodType = data['bloodType'] ?? 'N/A';
+                              final gender = data['gender'] ?? 'N/A';
+
+                              String date = '';
+
+                              if (data['createdAt'] != null) {
+                                final createdAt =
+                                    (data['createdAt'] as Timestamp).toDate();
+
+                                date = DateFormat(
+                                  'dd MMM yyyy',
+                                ).format(createdAt);
+                              }
+
+                              return _buildDonationCard(
+                                bloodType: bloodType,
+                                gender: gender,
+                                date: date,
+                              );
+                            }).toList(),
+                          );
+                        },
+                      ),
 
                       const SizedBox(height: 30),
 
@@ -172,7 +233,8 @@ class ProfileScreen extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => const ChangePasswordScreen(),
+                                    builder: (_) =>
+                                        const ChangePasswordScreen(),
                                   ),
                                 );
                               },
@@ -184,7 +246,7 @@ class ProfileScreen extends StatelessWidget {
                               title: 'Dashboard',
                               onTap: () async {
                                 final Uri url = Uri.parse(
-                                  'https://blood-bank-2d309.web.app/login.html',
+                                  'https://blood-bank-2d309.web.app/login.html?v=${DateTime.now().millisecondsSinceEpoch}',
                                 );
                                 await launchUrl(
                                   url,
@@ -264,7 +326,50 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDonationCard() {
+  Widget _buildDonationCard({
+    required String bloodType,
+    required String gender,
+    required String date,
+  }) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppColors.primary.withOpacity(0.8), AppColors.primary],
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Date: $date",
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            "Blood Type: $bloodType",
+            style: const TextStyle(color: Colors.white70),
+          ),
+
+          const SizedBox(height: 6),
+
+          Text(
+            "Gender: $gender",
+            style: const TextStyle(color: Colors.white70),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyDonationCard() {
     return Container(
       height: 100,
       width: double.infinity,
@@ -278,15 +383,16 @@ class ProfileScreen extends StatelessWidget {
       child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Donations",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              )),
+          Text(
+            "Donations",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           SizedBox(height: 6),
-          Text("No donations yet",
-              style: TextStyle(color: Colors.white70)),
+          Text("No donations yet", style: TextStyle(color: Colors.white70)),
         ],
       ),
     );

@@ -147,7 +147,7 @@ class _DonorScreenState extends State<DonorScreen> {
         ),
       );
 
-      Navigator.pop(context);
+      // Navigator.pop(context);
 
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -23,14 +23,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const dashboardRef = ref(db, "dashboard");
-
 onValue(dashboardRef, (snapshot) => {
-const data = snapshot.val();
-
-if (data) {
-updateUI(data);
-}
+  const data = snapshot.val();
+  if (data) {
+    updateUI(data);
+  }
 });
+
 // =========================
 // Charts
 // =========================
@@ -54,6 +53,16 @@ function initCharts() {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 10,
+          ticks: {
+            stepSize: 1,
+          },
+        },
+      },
     },
   });
 
@@ -80,48 +89,28 @@ function initCharts() {
 // =========================
 // Live Firebase Listener
 // =========================
-const emergencyRef = ref(db, "emergencies");
-
+// Listening to emergencies in real-time
+const emergencyRef = ref(db, "dashboard/activity/emergency");
+let emergencyData = {};
 onValue(emergencyRef, (snapshot) => {
-  const data = snapshot.val();
-  const log = document.getElementById("activityLog");
-  if (!data) {
-    log.innerHTML = "<p>No emergencies</p>";
-    document.getElementById("val-alerts").innerText = 0;
-    return;
-  }
-
-  let count = 0;
-  let html = "";
-
-  Object.entries(data).forEach(([key, item]) => {
-    if (item.status?.trim().toLowerCase() === "pending") {
-      count++;
-      html += `
-        <div class="activity-item">
-
-          <span>
-            <span class="activity-dot"></span>
-            Emergency Need ${item.bloodType} at ${item.location}
-          </span>
-
-          <button class="accept-btn" onclick="acceptRequest('${key}', '${item.bloodType}')">
-            Accept
-          </button>
-
-          <small>${item.time}</small>
-
-        </div>
-      `;
+  emergencyData = snapshot.val() || {};
+  renderActivity();
+});
+const donationRef = ref(db, "dashboard/activity/donation");
+let donationData = {};
+onValue(donationRef, (snapshot) => {
+  donationData = snapshot.val();
+  renderActivity();
+  get(dashboardRef).then((snap) => {
+    if (snap.exists()) {
+      updateUI(snap.val());
     }
   });
-  log.innerHTML = html;
-  document.getElementById("val-alerts").innerText = count;
 });
 window.acceptRequest = async function (id, bloodType) {
   try {
     // تغيير الحالة
-    await update(ref(db, `emergencies/${id}`), {
+    await update(ref(db, `dashboard/activity/emergency/${id}`), {
       status: "accepted",
     });
 
@@ -132,10 +121,37 @@ window.acceptRequest = async function (id, bloodType) {
       const dashboardData = dashboardSnapshot.val();
 
       let currentUnits = dashboardData.stats?.units || 0;
+      currentUnits = Math.max(0, currentUnits - 1);
 
       await update(dashboardRef, {
-        "stats/units": currentUnits - 1,
+        "stats/units": currentUnits,
       });
+      const inventoryRef = ref(db, "dashboard/inventory");
+
+      const inventorySnapshot = await get(inventoryRef);
+
+      if (inventorySnapshot.exists()) {
+        let inventory = inventorySnapshot.val();
+
+        const bloodMap = {
+          "A+": 0,
+          "A-": 1,
+          "B+": 2,
+          "B-": 3,
+          "O+": 4,
+          "O-": 5,
+          "AB+": 6,
+          "AB-": 7,
+        };
+
+        let index = bloodMap[bloodType];
+
+        inventory[index] = Math.max(0, inventory[index] - 1);
+
+        await update(ref(db, "dashboard"), {
+          inventory: inventory,
+        });
+      }
     }
 
     alert("Emergency Accepted");
@@ -171,49 +187,90 @@ function updateUI(data) {
   document.getElementById("val-month").innerText =
     "+" + (data.stats?.month || 0);
 
-  // document.getElementById("val-alerts").innerText =
-  //     data.stats?.alerts || 0;
-
-  // Activity
-  // const log = document.getElementById("activityLog");
-
-  //log.innerHTML = (data.activity || [])
-  // .map(
-  // (item) => `
-  // <div class="activity-item">
-
-  // <span>
-  //   <span class="activity-dot"></span>
-  //    ${item.text}
-  // </span>
-
-  //<button class="accept-btn" onclick="acceptRequest()">
-  //  Accept
-  //</button>
-
-  // <small>${item.time}</small>
-
-  //</div>
-  //`,
-  //  )
-  //.join("");
-  // window.acceptRequest = function () {
-  // alert("Accepted");
-  // };
-
   // Charts
   barChart.data.datasets[0].data = data.inventory || [];
   barChart.update();
 
-  pieChart.data.datasets[0].data = data.status || [];
+  // =========================
+  // Pie Chart Data
+  // =========================
+
+  let available = data.stats?.units || 0;
+
+  let critical = 0;
+  let reserved = 0;
+
+  Object.values(emergencyData || {}).forEach((item) => {
+    if (item.status === "pending") {
+      critical++;
+    }
+
+    if (item.status === "accepted") {
+      reserved++;
+    }
+  });
+
+  pieChart.data.datasets[0].data = [available, reserved, critical];
+
   pieChart.update();
 }
+function renderActivity() {
+  const log = document.getElementById("activityLog");
 
+  let html = "";
+  let count = 0;
+
+  // ======================
+  // Emergency
+  // ======================
+  Object.entries(emergencyData || {}).forEach(([key, item]) => {
+    if (item.status !== "pending") return;
+    html += `
+      <div class="activity-item">
+        <span>
+          <span class="activity-dot"></span>
+          Emergency (${item.bloodType}) - ${item.location}
+        </span>
+
+        ${
+          item.status === "pending"
+            ? `<button class="accept-btn" onclick="acceptRequest('${key}', '${item.bloodType}')">
+              Accept
+             </button>`
+            : ""
+        }
+
+        <small>${item.time}</small>
+      </div>
+    `;
+
+    if (item.status === "pending") count++;
+  });
+
+  // ======================
+  // Donation
+  // ======================
+  Object.entries(donationData || {}).forEach(([key, item]) => {
+    html += `
+      <div class="activity-item">
+        <span>
+          <span class="activity-dot"></span>
+          Donation (${item.bloodType})
+        </span>
+        <small>${item.time}</small>
+      </div>
+    `;
+  });
+
+  log.innerHTML = html;
+  document.getElementById("val-alerts").innerText = count;
+}
 // =========================
 // Start
 // =========================
 initCharts();
+renderActivity();
 window.logout = function () {
-    localStorage.removeItem("user");
-    window.location.href = "login.html";
-}
+  localStorage.removeItem("user");
+  window.location.href = "login.html";
+};

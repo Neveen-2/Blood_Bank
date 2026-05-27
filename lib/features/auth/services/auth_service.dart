@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geocoding/geocoding.dart';
 import 'dart:math' show cos, sqrt, asin;
@@ -6,12 +7,9 @@ import 'dart:math' show cos, sqrt, asin;
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseDatabase _database = FirebaseDatabase.instance;
 
-
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> login({required String email, required String password}) async {
     try {
       await _auth.signInWithEmailAndPassword(
         email: email.trim(),
@@ -22,16 +20,15 @@ class AuthService {
     }
   }
 
-  
- Future<void> signup({
-  required String fullName,
-  required String phone,
-  required String email,
-  required String address,
-  required String bloodType,
-  required String password,
-  required String role,
-}) async {
+  Future<void> signup({
+    required String fullName,
+    required String phone,
+    required String email,
+    required String address,
+    required String bloodType,
+    required String password,
+    required String role,
+  }) async {
     try {
       final credential = await _auth.createUserWithEmailAndPassword(
         email: email.trim(),
@@ -64,6 +61,7 @@ class AuthService {
         'bloodType': bloodType.trim(),
         'latitude': latitude,
         'longitude': longitude,
+        'role': role,
         'createdAt': FieldValue.serverTimestamp(),
       });
     } on FirebaseAuthException catch (e) {
@@ -71,12 +69,10 @@ class AuthService {
     }
   }
 
-
   Future<void> logout() async {
     await _auth.signOut();
   }
 
- 
   Future<void> changePassword({
     required String currentPassword,
     required String newPassword,
@@ -101,7 +97,6 @@ class AuthService {
     }
   }
 
-  
   Future<void> sendPasswordResetEmail({required String email}) async {
     try {
       await _auth.sendPasswordResetEmail(email: email.trim());
@@ -110,10 +105,7 @@ class AuthService {
     }
   }
 
- 
-  Future<Map<String, dynamic>?> getUserData({
-    required String uid,
-  }) async {
+  Future<Map<String, dynamic>?> getUserData({required String uid}) async {
     try {
       final doc = await _firestore.collection('users').doc(uid).get();
       return doc.data();
@@ -122,7 +114,6 @@ class AuthService {
     }
   }
 
- 
   Future<void> saveEmergencyAlert({
     required String userId,
     required String bloodType,
@@ -131,19 +122,20 @@ class AuthService {
     required String patientRelation,
     String? notes,
   }) async {
-    await _firestore.collection('emergencyAlerts').add({
+    final activityRef = _database.ref("dashboard/activity/emergency").push();
+
+    await activityRef.set({
       'userId': userId,
       'bloodType': bloodType,
       'location': location,
-      'patientGender': patientGender,
-      'patientRelation': patientRelation,
+      'gender': patientGender,
+      'relation': patientRelation,
       'notes': notes ?? '',
-      'status': 'active',
-      'createdAt': FieldValue.serverTimestamp(),
+      'status': 'pending',
+      'time': DateTime.now().toString(),
     });
   }
 
- 
   Future<List<Map<String, dynamic>>> searchDonors({
     required String bloodType,
     required double latitude,
@@ -176,10 +168,7 @@ class AuthService {
         );
 
         if (distance <= radiusKm) {
-          donors.add({
-            ...data,
-            'distance': distance,
-          });
+          donors.add({...data, 'distance': distance});
         }
       }
 
@@ -189,7 +178,6 @@ class AuthService {
       return [];
     }
   }
-
 
   double _haversineDistance(
     double lat1,
@@ -201,39 +189,87 @@ class AuthService {
     final a =
         0.5 -
         cos((lat2 - lat1) * p) / 2 +
-        cos(lat1 * p) *
-            cos(lat2 * p) *
-            (1 - cos((lon2 - lon1) * p)) /
-            2;
+        cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2;
 
     return 12742 * asin(sqrt(a));
   }
 
- 
   User? get currentUser => _auth.currentUser;
- 
-Future<void> saveDonorProfile({
-  required String bloodType,
-  required String gender,
-  required String relation,
-  required double latitude,
-  required double longitude,
-}) async {
-  final user = _auth.currentUser;
 
-  if (user == null) {
-    throw Exception('No user logged in');
+  Future<void> saveDonorProfile({
+    required String bloodType,
+    required String gender,
+    required String relation,
+    required double latitude,
+    required double longitude,
+  }) async {
+    final user = _auth.currentUser;
+
+    if (user == null) {
+      throw Exception('No user logged in');
+    }
+    final donationRef = _firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('donations')
+        .doc();
+    await donationRef.set({
+      'bloodType': bloodType,
+      'gender': gender,
+      'relation': relation,
+      'latitude': latitude,
+      'longitude': longitude,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+    final rtdb = FirebaseDatabase.instance.ref("dashboard");
+    final statsSnapshot = await rtdb.child("stats").get();
+
+    final stats = statsSnapshot.value as Map? ?? {};
+
+    final donors = (stats['donors'] ?? 0) + 1;
+    final units = (stats['units'] ?? 0) + 1;
+    final month = (stats['month'] ?? 0) + 1;
+
+    await rtdb.update({
+      "stats/donors": donors,
+      "stats/units": units,
+      "stats/month": month,
+    });
+    final inventoryRef = FirebaseDatabase.instance.ref("dashboard/inventory");
+
+    final inventorySnapshot = await inventoryRef.get();
+
+    List inventory = [];
+
+    if (inventorySnapshot.value is List) {
+      inventory = List.from(inventorySnapshot.value as List);
+    } else {
+      inventory = [0, 0, 0, 0, 0, 0, 0, 0];
+    }
+    const bloodMap = {
+      "A+": 0,
+      "A-": 1,
+      "B+": 2,
+      "B-": 3,
+      "O+": 4,
+      "O-": 5,
+      "AB+": 6,
+      "AB-": 7,
+    };
+
+    int index = bloodMap[bloodType] ?? 0;
+
+    inventory[index] = (inventory[index] ?? 0) + 1;
+
+    await inventoryRef.set(inventory);
+    final activityRef = FirebaseDatabase.instance.ref(
+      "dashboard/activity/donation",
+    );
+
+    await activityRef.push().set({
+      "bloodType": bloodType,
+      "text": "New donation $bloodType added",
+      "time": DateTime.now().toString(),
+    });
   }
-
-  await _firestore.collection('donors').doc(user.uid).set({
-    'uid': user.uid,
-    'bloodType': bloodType,
-    'gender': gender,
-    'relation': relation,
-    'latitude': latitude,
-    'longitude': longitude,
-    'isDonor': true,
-    'updatedAt': FieldValue.serverTimestamp(),
-  }, SetOptions(merge: true));
-}
 }

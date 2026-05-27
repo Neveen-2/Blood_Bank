@@ -1,177 +1,337 @@
 :root {
-    --primary-red:#E8474C;
-    --bg-gray: #f8f9fa;
-    --sidebar-width: 240px;
+  --primary-red: #e8474c;
+  --bg-gray: #f8f9fa;
+  --sidebar-width: 240px;
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
 }
 
 body {
-    display: flex;
-    background: var(--bg-gray);
+  display: flex;
+  background: var(--bg-gray);
 }
 
-/* ================= SIDEBAR ================= */
 .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: var(--sidebar-width);
-    height: 100vh;
-
-    background: var(--primary-red);
-    color: white;
-
-    display: flex;
-    flex-direction: column;
-
-    padding: 20px 0;
-    z-index: 100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: var(--primary-red);
+  color: white;
+  padding: 20px 0;
+  z-index: 100;
+  transition: 0.3s;
 }
 
-/* مهم جداً عشان logout يثبت تحت */
-.sidebar ul {
-    list-style: none;
-    padding: 0 10px;
-
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-/* header */
 .sidebar-header {
-    padding: 0 20px 30px;
-    font-size: 1.2rem;
-    font-weight: bold;
+  padding: 0 20px 30px;
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 
-/* links */
+.sidebar h2 {
+  margin-bottom: 30px;
+  color: rgb(255, 255, 255);
+}
+
+ul {
+  list-style: none;
+  padding: 0 10px;
+}
+
 ul li a {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-
-    text-decoration: none;
-    padding: 12px;
-    margin: 10px 0;
-
-    border-radius: 8px;
-    transition: 0.3s;
-
-    color: #eeeded;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  text-decoration: none;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  transition: 0.3s;
+  color: #eeeded;
 }
 
 ul li a:hover,
 .active {
-    background-color: #ffffff55;
+  background-color: #ffffff55;
 }
 
 ul li a i {
-    font-size: 22px;
+  font-size: 24px;
 }
 
-/* ================= LOGOUT FIX (IMPORTANT) ================= */
 .logout {
-    margin-top: auto;   /* أهم سطر */
-    width: 100%;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 
-/* خلي اللينك يبان صح */
-.logout a {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 12px;
-    margin: 10px;
-    border-radius: 8px;
-    color: white;
-    text-decoration: none;
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 25px;
+  color: white;
+  text-decoration: none;
+  opacity: 0.8;
+  transition: 0.3s;
 }
 
-.logout a:hover {
-    background: rgba(255,255,255,0.2);
+.nav-item.active {
+  background: rgba(255, 255, 255, 0.2);
+  opacity: 1;
 }
 
-/* ================= TOP BAR ================= */
 .top-bar {
-    position: fixed;
-    top: 0;
-    left: var(--sidebar-width);
-    right: 0;
-
-    height: 60px;
-    background: white;
-
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-
-    padding: 0 20px;
-
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  position: fixed;
+  top: 0;
+  left: var(--sidebar-width);
+  right: 0;
+  height: 60px;
+  background: white;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: 0.3s;
 }
 
-/* ================= CONTENT ================= */
+.action-btn {
+  margin-left: 10px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  transition: 0.3s;
+}
+
+.btn-refresh:hover {
+  background: #f0f0f0;
+}
+
+.btn-firebase {
+  background: orange;
+  color: white;
+  border: none;
+}
+
+.btn-firebase:hover {
+  background: #f57c00;
+}
+
 .content {
-    margin-left: var(--sidebar-width);
-    margin-top: 60px;
-
-    width: calc(100% - var(--sidebar-width));
-    padding: 20px;
+  margin-left: var(--sidebar-width);
+  margin-top: 60px;
+  width: calc(100% - var(--sidebar-width));
+  padding: 20px;
+  transition: 0.3s;
 }
 
-/* ================= CARDS ================= */
 .data-info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
 }
 
 .card {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    transition: 0.3s ease;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.3s ease;
+  text-align: center;
 }
 
 .card:hover {
-    transform: translateY(-5px);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* ================= RESPONSIVE ================= */
+.card i {
+  font-size: 30px;
+  color: #0047ab;
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.charts {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.chart-box {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  min-height: 300px;
+}
+
+.activity-card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.activity-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.activity-item > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: auto;
+}
+
+.activity-item small {
+  color: #999;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.activity-item .accept-btn {
+  background-color: green;
+  color: white;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 @media (max-width: 768px) {
+  html,
+  body {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
 
-    .sidebar {
-        width: 70px;
-    }
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 10px 0;
+  }
 
-    .sidebar-header {
-        font-size: 0;
-        padding: 10px;
-    }
+  .sidebar-header {
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    text-align: center;
+  }
 
-    ul li a span {
-        display: none;
-    }
+  .sidebar ul {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding: 0;
+  }
 
-    .logout a p {
-        display: none;
-    }
+  .sidebar ul li a {
+    margin: 0;
+    padding: 8px 12px;
+  }
 
-    .content {
-        margin-left: 70px;
-        width: calc(100% - 70px);
-    }
+  .sidebar ul li a p {
+    display: none;
+  }
 
-    .top-bar {
-        left: 70px;
-    }
+  .sidebar .logout {
+    position: relative;
+    width: auto;
+  }
+
+  .top-bar {
+    position: relative;
+    left: 0;
+    width: 100%;
+    height: auto;
+    padding: 15px;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .action-btn {
+    margin-left: 0;
+  }
+
+  .content {
+    margin-left: 0;
+    margin-top: 0;
+    width: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+  }
+
+  .data-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+  }
+
+  .charts {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-box {
+    min-height: 260px;
+  }
+
+  .activity-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 15px 0;
+  }
+
+  .activity-item > span {
+    margin-right: 0;
+  }
+
+  .activity-item .accept-btn {
+    width: 100%;
+    text-align: center;
+    padding: 8px;
+  }
+
+  .activity-item small {
+    align-self: flex-end;
+  }
+  .logout {
+    position: static;
+    margin-top: 20px;
+  }
 }

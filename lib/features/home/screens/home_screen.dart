@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'package:blood_bank/core/widgets/home_bottom_nav.dart';
@@ -20,10 +21,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
-  String? _urgentBloodType;
-  String? _urgentLocation;
+  // String? _urgentBloodType;
+  // String? _urgentLocation;
 
   Position? _currentPosition;
+  final DatabaseReference _emergencyRef = FirebaseDatabase.instance.ref(
+    "dashboard/activity/emergency",
+  );
 
   @override
   void initState() {
@@ -31,7 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _getUserLocation();
   }
 
- 
   Future<void> _getUserLocation() async {
     LocationPermission permission = await Geolocator.requestPermission();
 
@@ -49,7 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
- 
   double _distanceKm(double lat, double lng) {
     if (_currentPosition == null) return 9999;
 
@@ -62,88 +64,162 @@ class _HomeScreenState extends State<HomeScreen> {
         1000;
   }
 
- 
   void _setIndex(int index) {
     setState(() => _selectedIndex = index);
   }
 
-  void _setUrgentAlert(String bloodType, String location) {
-    setState(() {
-      _urgentBloodType = bloodType;
-      _urgentLocation = location;
-      _selectedIndex = 0;
-    });
-  }
-
+  // void _setUrgentAlert(String bloodType, String location) {
+  //   setState(() {
+  //     _urgentBloodType = bloodType;
+  //     _urgentLocation = location;
+  //     _selectedIndex = 0;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     final screens = [
-   
       Column(
         children: [
           const HomeHeader(userName: 'Donor'),
 
           Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream:
-                  FirebaseFirestore.instance.collection('users').snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
+            child: StreamBuilder(
+              stream: _emergencyRef.onValue,
+              builder: (context, emergencySnapshot) {
+                if (!emergencySnapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                final docs = snapshot.data!.docs;
+                final emergencyData = emergencySnapshot.data!.snapshot.value;
+                String? latestBlood;
+                String? latestLocation;
 
-                List<Map<String, dynamic>> donors = [];
+                if (emergencyData != null) {
+                  final map = Map<String, dynamic>.from(emergencyData as Map);
 
-                for (var doc in docs) {
-                  final data = doc.data() as Map<String, dynamic>;
+                  final entries = map.entries.toList();
 
-                  final lat = (data['latitude'] ?? 0).toDouble();
-                  final lng = (data['longitude'] ?? 0).toDouble();
+                  entries.sort((a, b) {
+                    final timeA =
+                        DateTime.tryParse(a.value['time'] ?? '') ??
+                        DateTime(2000);
 
-                  final distance = _distanceKm(lat, lng);
+                    final timeB =
+                        DateTime.tryParse(b.value['time'] ?? '') ??
+                        DateTime(2000);
 
-                  donors.add({
-                    'name': data['fullName'] ?? '',
-                    'blood': data['bloodType'] ?? '',
-                    'distance': distance.toStringAsFixed(1),
+                    return timeB.compareTo(timeA);
                   });
+
+                  for (var entry in entries) {
+                    final item = Map<String, dynamic>.from(entry.value);
+
+                    if (item['status'] == 'pending') {
+                      latestBlood = item['bloodType'];
+                      latestLocation = item['location'];
+
+                      break;
+                    }
+                  }
                 }
 
-                
-                donors.sort((a, b) {
-                  return double.parse(a['distance'])
-                      .compareTo(double.parse(b['distance']));
-                });
+                return StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('users')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-            
-                if (_urgentBloodType != null) {
-                  donors = donors
-                      .where((d) => d['blood'] == _urgentBloodType)
-                      .toList();
-                }
+                    final docs = snapshot.data!.docs;
 
-                return HomeBody(
-                  urgentBloodType: _urgentBloodType,
-                  urgentLocation: _urgentLocation,
-                  nearbyDonors: donors,
-                  onEmergencyTap: () => _setIndex(1),
+                    List<Map<String, dynamic>> donors = [];
+
+                    for (var doc in docs) {
+                      final data = doc.data() as Map<String, dynamic>;
+
+                      final lat = (data['latitude'] ?? 0).toDouble();
+
+                      final lng = (data['longitude'] ?? 0).toDouble();
+
+                      final distance = _distanceKm(lat, lng);
+
+                      donors.add({
+                        'name': data['fullName'] ?? '',
+                        'blood': data['bloodType'] ?? '',
+                        'distance': distance.toStringAsFixed(1),
+                      });
+                    }
+
+                    donors.sort((a, b) {
+                      return double.parse(
+                        a['distance'],
+                      ).compareTo(double.parse(b['distance']));
+                    });
+
+                    if (latestBlood != null) {
+                      donors = donors
+                          .where((d) => d['blood'] == latestBlood)
+                          .toList();
+                    }
+
+                    return HomeBody(
+                      urgentBloodType: latestBlood,
+                      urgentLocation: latestLocation,
+                      nearbyDonors: donors,
+                      onEmergencyTap: () => _setIndex(1),
+                    );
+                  },
                 );
               },
             ),
           ),
+
+          // List<Map<String, dynamic>> donors = [];
+
+          // for (var doc in docs) {
+          //   final data = doc.data() as Map<String, dynamic>;
+
+          //   final lat = (data['latitude'] ?? 0).toDouble();
+          //   final lng = (data['longitude'] ?? 0).toDouble();
+
+          //   final distance = _distanceKm(lat, lng);
+
+          //   donors.add({
+          //     'name': data['fullName'] ?? '',
+          //     'blood': data['bloodType'] ?? '',
+          //     'distance': distance.toStringAsFixed(1),
+          //   });
+          // }
+
+          // donors.sort((a, b) {
+          //   return double.parse(
+          //     a['distance'],
+          //   ).compareTo(double.parse(b['distance']));
+          // });
+
+          // if (_urgentBloodType != null) {
+          //   donors = donors
+          //       .where((d) => d['blood'] == _urgentBloodType)
+          //       .toList();
+          // }
+
+          //           return HomeBody(
+          //             urgentBloodType: _urgentBloodType,
+          //             urgentLocation: _urgentLocation,
+          //             nearbyDonors: donors,
+          //             onEmergencyTap: () => _setIndex(1),
+          //           );
+          //         },
+          //       ),
+          //     ),
         ],
       ),
 
-      
-      EmergencyScreen(
-        onBackToHome: () => _setIndex(0),
-        onAlertSent: _setUrgentAlert,
-      ),
+      EmergencyScreen(onBackToHome: () => _setIndex(0), onAlertSent: null),
 
-     
       const DonorScreen(),
 
       const ProfileScreen(),
