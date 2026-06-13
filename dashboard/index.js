@@ -184,9 +184,24 @@ function updateUI(data) {
 
   document.getElementById("val-units").innerText = data.stats?.units || 0;
 
-  document.getElementById("val-month").innerText =
-    "+" + (data.stats?.month || 0);
+  // document.getElementById("val-month").innerText =
+  //   "+" + (data.stats?.month || 0);
+  const now = new Date();
 
+  let monthlyDonations = 0;
+
+  Object.values(donationData || {}).forEach((item) => {
+    const donationDate = new Date(item.time);
+
+    if (
+      donationDate.getMonth() === now.getMonth() &&
+      donationDate.getFullYear() === now.getFullYear()
+    ) {
+      monthlyDonations++;
+    }
+  });
+
+  document.getElementById("val-month").innerText = "+" + monthlyDonations;
   // Charts
   barChart.data.datasets[0].data = data.inventory || [];
   barChart.update();
