@@ -228,12 +228,12 @@ class AuthService {
 
     final donors = (stats['donors'] ?? 0) + 1;
     final units = (stats['units'] ?? 0) + 1;
-    final month = (stats['month'] ?? 0) + 1;
+    // final month = (stats['month'] ?? 0) + 1;
 
     await rtdb.update({
       "stats/donors": donors,
       "stats/units": units,
-      "stats/month": month,
+      // "stats/month": month,
     });
     final inventoryRef = FirebaseDatabase.instance.ref("dashboard/inventory");
 
