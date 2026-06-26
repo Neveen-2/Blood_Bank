@@ -19,7 +19,6 @@ const firebaseConfig = {
   messagingSenderId: "1007218222332",
   appId: "1:1007218222332:web:0af86af57b8a32f0746379",
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const dashboardRef = ref(db, "dashboard");
@@ -183,9 +182,6 @@ function updateUI(data) {
   ).toLocaleString();
 
   document.getElementById("val-units").innerText = data.stats?.units || 0;
-
-  // document.getElementById("val-month").innerText =
-  //   "+" + (data.stats?.month || 0);
   const now = new Date();
 
   let monthlyDonations = 0;
@@ -246,6 +242,15 @@ function renderActivity() {
           <span class="activity-dot"></span>
           Emergency (${item.bloodType}) - ${item.location}
         </span>
+         
+       ${
+         item.notes
+           ? `<div style="margin-top:6px;font-size:13px;color:#666;">
+         <b>Case Details:</b><br>
+         ${item.notes}
+       </div>`
+           : ""
+       }
 
         ${
           item.status === "pending"

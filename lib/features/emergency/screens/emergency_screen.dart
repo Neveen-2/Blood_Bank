@@ -26,8 +26,12 @@ class EmergencyScreen extends StatefulWidget {
 }
 
 class _EmergencyScreenState extends State<EmergencyScreen> {
-  final TextEditingController _locationController = TextEditingController();
-  final TextEditingController _notesController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _locationController =
+      TextEditingController();
+  final TextEditingController _notesController =
+      TextEditingController();
 
   String? _selectedBloodType;
   PatientGender _selectedGender = PatientGender.male;
@@ -50,20 +54,30 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
 
     final result = await Navigator.push<Map<String, dynamic>>(
       context,
-      MaterialPageRoute(builder: (context) => const LocationPickerScreen()),
+      MaterialPageRoute(
+        builder: (context) => const LocationPickerScreen(),
+      ),
     );
 
     _isPickingLocation = false;
 
     if (result != null) {
       setState(() {
-        _locationController.text = result['location'] ?? '';
+        _locationController.text =
+            result['location'] ?? '';
       });
     }
   }
 
   Future<void> _sendEmergencyAlert() async {
-    if (_selectedBloodType == null || _locationController.text.isEmpty) {
+    // Validate Notes field
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    // Validate blood type and location
+    if (_selectedBloodType == null ||
+        _locationController.text.isEmpty) {
       setState(() => _status = EmergencyStatus.error);
       return;
     }
@@ -73,7 +87,6 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
     try {
       final auth = AuthService();
 
-     
       print("USER ID: ${auth.currentUser?.uid}");
 
       final user = auth.currentUser;
@@ -97,16 +110,26 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Emergency alert sent successfully!'),
+          content: Text(
+            'Emergency alert sent successfully!',
+          ),
           backgroundColor: AppColors.primary,
         ),
       );
 
-      widget.onAlertSent?.call(_selectedBloodType!, _locationController.text);
+      widget.onAlertSent?.call(
+        _selectedBloodType!,
+        _locationController.text,
+      );
 
-      Future.delayed(const Duration(seconds: 1), () {
-        if (mounted) widget.onBackToHome();
-      });
+      Future.delayed(
+        const Duration(seconds: 1),
+        () {
+          if (mounted) {
+            widget.onBackToHome();
+          }
+        },
+      );
     } catch (e) {
       if (!mounted) return;
 
@@ -114,7 +137,9 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error: ${e.toString()}'),
+          content: Text(
+            'Error: ${e.toString()}',
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -125,11 +150,15 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.black),
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: AppColors.black,
+          ),
           onPressed: widget.onBackToHome,
         ),
         title: const Text(
@@ -140,92 +169,173 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
           ),
         ),
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const AppSectionTitle('Blood Request Details'),
-            const SizedBox(height: 16),
 
-            AppDropdown<String>(
-              selectedValue: _selectedBloodType,
-              items: const ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'],
-              onChanged: (value) => setState(() => _selectedBloodType = value),
-              hint: 'Select blood type',
-              itemLabel: (item) => item,
-            ),
+        child: Form(
+          key: _formKey,
 
-            const SizedBox(height: 16),
-            const AppLabel('Location'),
+          child: Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
+            children: [
+              const AppSectionTitle(
+                'Blood Request Details',
+              ),
 
-            const SizedBox(height: 8),
-            GestureDetector(
-              onTap: _pickLocation,
-              child: Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(12),
-                  color: Colors.grey.shade50,
+              const SizedBox(height: 16),
+
+              AppDropdown<String>(
+                selectedValue:
+                    _selectedBloodType,
+                items: const [
+                  'A+',
+                  'A-',
+                  'B+',
+                  'B-',
+                  'O+',
+                  'O-',
+                  'AB+',
+                  'AB-',
+                ],
+                onChanged: (value) =>
+                    setState(
+                  () => _selectedBloodType =
+                      value,
                 ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.location_on_outlined),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        _locationController.text.isEmpty
-                            ? 'Select your location'
-                            : _locationController.text,
-                        style: TextStyle(
-                          color: _locationController.text.isEmpty
-                              ? Colors.grey
-                              : AppColors.primary,
+                hint: 'Select blood type',
+                itemLabel: (item) => item,
+              ),
+
+              const SizedBox(height: 16),
+
+              const AppLabel('Location'),
+
+              const SizedBox(height: 8),
+
+              GestureDetector(
+                onTap: _pickLocation,
+                child: Container(
+                  padding:
+                      const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color:
+                          Colors.grey.shade300,
+                    ),
+                    borderRadius:
+                        BorderRadius.circular(
+                      12,
+                    ),
+                    color:
+                        Colors.grey.shade50,
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons
+                            .location_on_outlined,
+                      ),
+                      const SizedBox(
+                          width: 10),
+                      Expanded(
+                        child: Text(
+                          _locationController
+                                  .text
+                                  .isEmpty
+                              ? 'Select your location'
+                              : _locationController
+                                  .text,
+                          style: TextStyle(
+                            color:
+                                _locationController
+                                        .text
+                                        .isEmpty
+                                    ? Colors.grey
+                                    : AppColors
+                                        .primary,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            const SizedBox(height: 16),
-            const AppLabel('Notes'),
-            const SizedBox(height: 8),
-            NotesField(controller: _notesController),
+              const SizedBox(height: 16),
 
-            const SizedBox(height: 20),
-            const AppLabel('Gender'),
-            Row(
-              children: [
-                AppToggleButton(
-                  label: 'Male',
-                  isSelected: _selectedGender == PatientGender.male,
-                  onTap: () =>
-                      setState(() => _selectedGender = PatientGender.male),
+              const AppLabel('Notes'),
+
+              const SizedBox(height: 8),
+
+              NotesField(
+                controller:
+                    _notesController,
+              ),
+
+              const SizedBox(height: 20),
+
+              const AppLabel('Gender'),
+
+              Row(
+                children: [
+                  AppToggleButton(
+                    label: 'Male',
+                    isSelected:
+                        _selectedGender ==
+                            PatientGender
+                                .male,
+                    onTap: () =>
+                        setState(
+                      () =>
+                          _selectedGender =
+                              PatientGender
+                                  .male,
+                    ),
+                  ),
+
+                  const SizedBox(
+                      width: 12),
+
+                  AppToggleButton(
+                    label: 'Female',
+                    isSelected:
+                        _selectedGender ==
+                            PatientGender
+                                .female,
+                    onTap: () =>
+                        setState(
+                      () =>
+                          _selectedGender =
+                              PatientGender
+                                  .female,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 30),
+
+              if (_status ==
+                  EmergencyStatus.error)
+                const AppErrorBox(
+                  message:
+                      'Please fill blood type and location',
                 ),
-                const SizedBox(width: 12),
-                AppToggleButton(
-                  label: 'Female',
-                  isSelected: _selectedGender == PatientGender.female,
-                  onTap: () =>
-                      setState(() => _selectedGender = PatientGender.female),
-                ),
-              ],
-            ),
 
-            const SizedBox(height: 30),
-
-            if (_status == EmergencyStatus.error)
-              const AppErrorBox(message: 'Please fill blood type and location'),
-
-            PrimaryButton(
-              text: 'Send Emergency Alert',
-              isLoading: _status == EmergencyStatus.loading,
-              onPressed: _sendEmergencyAlert,
-            ),
-          ],
+              PrimaryButton(
+                text:
+                    'Send Emergency Alert',
+                isLoading:
+                    _status ==
+                        EmergencyStatus
+                            .loading,
+                onPressed:
+                    _sendEmergencyAlert,
+              ),
+            ],
+          ),
         ),
       ),
     );

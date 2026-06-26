@@ -8,7 +8,7 @@ class NotesField extends StatelessWidget {
   const NotesField({
     super.key,
     required this.controller,
-    this.hint = "Write here...",
+    this.hint = "Describe the emergency and add contact information...",
   });
 
   @override
@@ -18,9 +18,15 @@ class NotesField extends StatelessWidget {
         color: AppColors.inputBg,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         maxLines: 4,
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) {
+            return 'Please enter notes';
+          }
+          return null;
+        },
         decoration: InputDecoration(
           hintText: hint,
           border: InputBorder.none,
